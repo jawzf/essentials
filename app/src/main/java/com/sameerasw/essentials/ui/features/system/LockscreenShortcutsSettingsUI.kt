@@ -207,6 +207,10 @@ fun LockscreenShortcutsSettingsUI(
                     } else {
                         null
                     }
+                if (source == ActivityIconSource.CUSTOM && path == null) {
+                    Toast.makeText(context, R.string.activity_icon_load_failed, Toast.LENGTH_SHORT).show()
+                    return@ActivityIconSheet
+                }
                 if (path != iconAction.customIconPath) ActivityLauncherUtil.deleteCustomIcon(iconAction.customIconPath)
                 viewModel.setLockscreenShortcutActions(
                     side,
