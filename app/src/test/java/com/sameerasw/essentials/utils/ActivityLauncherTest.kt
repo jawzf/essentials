@@ -2,6 +2,7 @@ package com.sameerasw.essentials.utils
 
 import com.sameerasw.essentials.domain.diy.Action
 import com.sameerasw.essentials.domain.diy.ActionGsonAdapter
+import com.sameerasw.essentials.domain.model.ActivityIconSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,8 +16,20 @@ class ActivityLauncherTest {
                 className = "com.android.settings.Settings\$DevelopmentSettingsActivity",
                 label = "Developer options",
                 requiresRoot = true,
+                iconSource = ActivityIconSource.CUSTOM,
+                customIconPath = "/data/icons/dev.png",
             )
         assertEquals(action, ActionGsonAdapter.fromJson(ActionGsonAdapter.toJson(action)))
+    }
+
+    @Test
+    fun savedActionsWithoutAKnownIconSourceUseTheActivityIcon() {
+        val older = ActionGsonAdapter.fromJson("""{"type":"OpenActivity","packageName":"a","className":"a.B"}""") as Action.OpenActivity
+        assertEquals(ActivityIconSource.ACTIVITY, ActivityLauncherUtil.iconSourceOf(older))
+        val unknown =
+            ActionGsonAdapter.fromJson("""{"type":"OpenActivity","packageName":"a","className":"a.B","iconSource":"EMOJI"}""")
+                as Action.OpenActivity
+        assertEquals(ActivityIconSource.ACTIVITY, ActivityLauncherUtil.iconSourceOf(unknown))
     }
 
     @Test

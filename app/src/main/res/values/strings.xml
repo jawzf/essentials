@@ -247,6 +247,12 @@
     <string name="button_remap_no_actions">No actions. The button works normally.</string>
     <string name="button_remap_sequence_hint">Actions run in order from top to bottom. Drag to reorder.</string>
     <string name="diy_action_open_activity">Open Activity</string>
+    <string name="activity_icon_title">Shortcut icon</string>
+    <string name="activity_icon_source_activity">Activity</string>
+    <string name="activity_icon_source_app">App</string>
+    <string name="activity_icon_source_custom">Image</string>
+    <string name="activity_icon_choose_image">Choose image</string>
+    <string name="activity_icon_load_failed">Couldn\'t load that image</string>
     <string name="feat_activity_launcher_title">Activity launcher</string>
     <string name="feat_activity_launcher_desc">Open or pin any app screen</string>
     <string name="about_desc_activity_launcher">Browse the screens (activities) inside any app, open them directly and pin them to your home screen. Screens an app keeps private are marked Root only and need root to open.</string>

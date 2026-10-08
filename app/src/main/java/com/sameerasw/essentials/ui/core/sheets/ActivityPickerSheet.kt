@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.sameerasw.essentials.R
 import com.sameerasw.essentials.domain.diy.Action
+import com.sameerasw.essentials.domain.model.ActivityIconSource
 import com.sameerasw.essentials.utils.ActivityLauncherUtil
 import com.sameerasw.essentials.utils.HapticUtil
 import com.sameerasw.essentials.utils.ShellUtils
@@ -118,6 +119,7 @@ fun ActivityPickerSheet(
     val iconSizePx = with(LocalDensity.current) { ICON_SIZE.dp.roundToPx() }
     var query by remember { mutableStateOf("") }
     var activities by remember { mutableStateOf<List<ActivityLauncherUtil.LaunchableActivity>?>(null) }
+    var pinTarget by remember { mutableStateOf<Action.OpenActivity?>(null) }
 
     LaunchedEffect(packageName) {
         activities = withContext(Dispatchers.IO) { ActivityLauncherUtil.getActivities(context, packageName) }
@@ -220,10 +222,10 @@ fun ActivityPickerSheet(
                                         Toast.makeText(context, R.string.activity_picker_root_required_toast, Toast.LENGTH_SHORT).show()
                                     }
                                 },
-                                onPin = { icon ->
+                                onPin = {
                                     HapticUtil.performVirtualKeyHaptic(view)
                                     if (isAvailable) {
-                                        ShortcutUtil.pinActionShortcut(context, toAction(activity), activity.label, icon)
+                                        pinTarget = toAction(activity)
                                     } else {
                                         Toast.makeText(context, R.string.activity_picker_root_required_toast, Toast.LENGTH_SHORT).show()
                                     }
@@ -236,6 +238,24 @@ fun ActivityPickerSheet(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
+    pinTarget?.let { target ->
+        ActivityIconSheet(
+            action = target,
+            confirmLabel = stringResource(R.string.action_create_shortcut),
+            onDismiss = { pinTarget = null },
+            onConfirm = { source, icon ->
+                ShortcutUtil.pinActionShortcut(
+                    context,
+                    target,
+                    target.label,
+                    icon,
+                    adaptive = source == ActivityIconSource.CUSTOM,
+                )
+                pinTarget = null
+            },
+        )
+    }
 }
 
 @Composable
@@ -246,7 +266,7 @@ private fun ActivityRow(
     isAvailable: Boolean,
     canPin: Boolean,
     onClick: () -> Unit,
-    onPin: (Bitmap) -> Unit,
+    onPin: () -> Unit,
 ) {
     val context = LocalContext.current
     val icon by produceState<Bitmap?>(null, packageName, activity.className) {
@@ -313,7 +333,7 @@ private fun ActivityRow(
                 }
             }
             if (canPin) {
-                IconButton(onClick = { icon?.let(onPin) }, enabled = icon != null) {
+                IconButton(onClick = onPin) {
                     Icon(
                         painter = painterResource(id = R.drawable.rounded_add_24),
                         contentDescription = stringResource(R.string.action_create_shortcut),

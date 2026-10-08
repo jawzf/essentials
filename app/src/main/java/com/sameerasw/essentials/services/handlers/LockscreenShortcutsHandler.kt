@@ -318,7 +318,7 @@ class LockscreenShortcutsHandler(
 
     private fun loadActivity(action: Action.OpenActivity): AppInfo? {
         val size = (APP_ICON_SIZE_DP * service.resources.displayMetrics.density).toInt()
-        val icon = ActivityLauncherUtil.loadIcon(service, action.packageName, action.className, size) ?: return null
+        val icon = ActivityLauncherUtil.loadShortcutIcon(service, action, size) ?: return null
         return AppInfo(
             label = action.label.ifBlank { service.getString(action.title) },
             icon = icon.asImageBitmap(),

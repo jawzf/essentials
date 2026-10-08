@@ -17,6 +17,7 @@ import com.google.gson.annotations.SerializedName
 import com.sameerasw.essentials.R
 import com.sameerasw.essentials.domain.HapticFeedbackType
 import com.sameerasw.essentials.domain.ScreenOffMethod
+import com.sameerasw.essentials.domain.model.ActivityIconSource
 import com.sameerasw.essentials.domain.model.HilightEffect
 import com.sameerasw.essentials.domain.model.HilightPattern
 import com.sameerasw.essentials.domain.model.NotificationLightingColorMode
@@ -407,6 +408,8 @@ sealed interface Action {
         @SerializedName("className") val className: String = "",
         @SerializedName("label") val label: String = "",
         @SerializedName("requiresRoot") val requiresRoot: Boolean = false,
+        @SerializedName("iconSource") val iconSource: ActivityIconSource = ActivityIconSource.ACTIVITY,
+        @SerializedName("customIconPath") val customIconPath: String = "",
     ) : Action {
         override val title: Int get() = R.string.diy_action_open_activity
         override val icon: Int get() = R.drawable.rounded_app_registration_24
