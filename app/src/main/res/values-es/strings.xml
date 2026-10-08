@@ -1766,6 +1766,4 @@ Requiere permiso de administrador del dispositivo si se utiliza el bloqueo.</str
     <string name="island_launcher_only_desc">Ocultar si una aplicación esta abierta</string>
     <string name="island_weather_mode_title">Mostrar en Isla</string>
     <string name="island_section_notifications">Notificaciones</string>
-    <string name="feat_weather_title">Clima</string>
-    <string name="feat_weather_desc">Configura proveedores y configuraciones</string>
 </resources>
