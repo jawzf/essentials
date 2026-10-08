@@ -1278,6 +1278,10 @@
     <string name="diy_trigger_bluetooth_disconnected">Bluetooth Device Disconnected</string>
     <string name="diy_trigger_wifi_connected">Wi-Fi Network Connected</string>
     <string name="diy_trigger_wifi_disconnected">Wi-Fi Network Disconnected</string>
+    <string name="diy_trigger_arrive_location">Arrive at Location</string>
+    <string name="diy_trigger_leave_location">Leave Location</string>
+    <string name="diy_trigger_arrive_location_named">Arrive at %1$s</string>
+    <string name="diy_trigger_leave_location_named">Leave %1$s</string>
     <string name="diy_trigger_power_saving_on">Power Saving On</string>
     <string name="diy_trigger_power_saving_off">Power Saving Off</string>
     <string name="diy_trigger_accessibility_button">Accessibility Shortcut</string>
@@ -1323,6 +1327,19 @@
     <string name="diy_category_system_screen">System &amp; Screen</string>
     <string name="diy_category_battery_power">Battery &amp; Power</string>
     <string name="diy_category_time_schedule">Time &amp; Schedule</string>
+    <string name="diy_category_location">Location</string>
+    <string name="diy_location_none">No place chosen yet</string>
+    <string name="diy_location_pinned">Pinned place</string>
+    <string name="diy_location_hint">In Google Maps, open the place, tap Share, then Copy link. Come back here and it\'s added automatically.</string>
+    <string name="diy_location_open_maps">Google Maps</string>
+    <string name="diy_location_paste_link">Paste link</string>
+    <string name="diy_location_name_label">Name</string>
+    <string name="diy_location_distance_title">Distance</string>
+    <string name="diy_location_distance_m">%1$d m</string>
+    <string name="diy_location_distance_km">%1$.1f km</string>
+    <string name="diy_location_link_added">Place added from the copied link</string>
+    <string name="diy_location_accuracy_off">Turn on Google Location Accuracy in Settings › Location › Location services. Location triggers can\'t run without it.</string>
+    <string name="diy_location_link_invalid">Copy a Google Maps link to a place first</string>
 
     <string name="diy_state_charging">Charging</string>
     <string name="diy_state_screen_on">Screen On</string>

@@ -20,11 +20,11 @@ import com.google.android.gms.location.Priority
 import com.sameerasw.essentials.data.repository.LocationReachedRepository
 import com.sameerasw.essentials.domain.model.LocationAlarm
 import com.sameerasw.essentials.services.LocationReachedService
+import com.sameerasw.essentials.utils.MapsLinkParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -404,7 +404,7 @@ class LocationReachedViewModel(
         if (textToParse == null) return false
 
         // Check if it's a shortened URL that needs resolution
-        if (textToParse.contains("maps.app.goo.gl") || textToParse.contains("goo.gl/maps")) {
+        if (MapsLinkParser.isShortLink(textToParse)) {
             repository.setShowBottomSheet(true)
             resolveAndParse(textToParse)
             return true
@@ -414,76 +414,37 @@ class LocationReachedViewModel(
     }
 
     private fun tryParseAndSet(text: String): Boolean {
-        val commaRegex = Regex("(-?\\d+\\.\\d+)\\s*,\\s*(-?\\d+\\.\\d+)")
-        val dataRegex = Regex("!3d(-?\\d+\\.\\d+)!4d(-?\\d+\\.\\d+)")
-
-        val match = commaRegex.find(text) ?: dataRegex.find(text)
-
-        if (match != null) {
-            val lat = match.groupValues[1].toDoubleOrNull() ?: 0.0
-            val lng = match.groupValues[2].toDoubleOrNull() ?: 0.0
-
-            if (lat != 0.0 && lng != 0.0) {
-                android.util.Log.d("LocationReachedVM", "Parsed coordinates: $lat, $lng")
-                repository.setTempAlarm(
-                    LocationAlarm(
-                        latitude = lat,
-                        longitude = lng,
-                        name = "New Destination",
-                        isEnabled = false,
-                    ),
-                )
-                repository.setShowBottomSheet(true)
-                updateCurrentDistance()
-                repository.setIsProcessing(false)
-                return true
-            }
+        val place = MapsLinkParser.parse(text)
+        if (place == null) {
+            android.util.Log.d("LocationReachedVM", "No coordinates found in text: $text")
+            repository.setIsProcessing(false)
+            return false
         }
-        android.util.Log.d("LocationReachedVM", "No coordinates found in text: $text")
-        repository.setIsProcessing(false)
-        return false
+        setPlace(place)
+        return true
     }
 
+    private fun setPlace(place: MapsLinkParser.Place) {
+        android.util.Log.d("LocationReachedVM", "Parsed coordinates: ${place.latitude}, ${place.longitude}")
+        repository.setTempAlarm(
+            LocationAlarm(
+                latitude = place.latitude,
+                longitude = place.longitude,
+                name = "New Destination",
+                isEnabled = false,
+            ),
+        )
+        repository.setShowBottomSheet(true)
+        updateCurrentDistance()
+        repository.setIsProcessing(false)
+    }
+
+    // Current short links resolve to a place without coordinates, so this can fall back to geocoding its address
     private fun resolveAndParse(shortUrl: String) {
         repository.setIsProcessing(true)
         viewModelScope.launch {
-            val resolvedUrl =
-                withContext(Dispatchers.IO) {
-                    try {
-                        val url = URL(shortUrl)
-                        val connection = url.openConnection() as HttpURLConnection
-                        connection.instanceFollowRedirects = false
-                        connection.connect()
-                        val location = connection.getHeaderField("Location")
-                        connection.disconnect()
-                        location ?: shortUrl
-                    } catch (e: Exception) {
-                        android.util.Log.e("LocationReachedVM", "Error resolving URL", e)
-                        shortUrl
-                    }
-                }
-            android.util.Log.d("LocationReachedVM", "Resolved URL: $resolvedUrl")
-            if (!tryParseAndSet(resolvedUrl)) {
-                val pathRegex = Regex("@(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)")
-                val pathMatch = pathRegex.find(resolvedUrl)
-                if (pathMatch != null) {
-                    val lat = pathMatch.groupValues[1].toDoubleOrNull() ?: 0.0
-                    val lng = pathMatch.groupValues[2].toDoubleOrNull() ?: 0.0
-                    if (lat != 0.0 && lng != 0.0) {
-                        repository.setTempAlarm(
-                            LocationAlarm(
-                                latitude = lat,
-                                longitude = lng,
-                                name = "New Destination",
-                                isEnabled = false,
-                            ),
-                        )
-                        repository.setShowBottomSheet(true)
-                        updateCurrentDistance()
-                    }
-                }
-                repository.setIsProcessing(false)
-            }
+            val place = withContext(Dispatchers.IO) { MapsLinkParser.resolve(getApplication(), shortUrl) }
+            if (place != null) setPlace(place) else repository.setIsProcessing(false)
         }
     }
 }

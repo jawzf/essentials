@@ -1491,6 +1491,9 @@
                 <action android:name="com.sameerasw.essentials.ACTION_TIME_AUTOMATION_TRIGGER" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".services.automation.receivers.GeofenceReceiver"
+            android:exported="false" />
 
 
         <service

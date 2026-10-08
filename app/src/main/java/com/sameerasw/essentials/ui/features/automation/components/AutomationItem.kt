@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import com.sameerasw.essentials.R
 import com.sameerasw.essentials.domain.diy.Action
 import com.sameerasw.essentials.domain.diy.Automation
+import com.sameerasw.essentials.domain.diy.Trigger
 import com.sameerasw.essentials.ui.components.menus.SegmentedDropdownMenu
 import com.sameerasw.essentials.ui.components.menus.SegmentedDropdownMenuItem
 import com.sameerasw.essentials.ui.core.containers.RoundedCardContainer
@@ -227,10 +228,14 @@ fun AutomationItem(
                     val titleString =
                         when (automation.type) {
                             Automation.Type.TRIGGER ->
-                                automation.trigger?.title?.let {
-                                    stringResource(
-                                        it,
-                                    )
+                                when (val trigger = automation.trigger) {
+                                    is Trigger.ArriveAtLocation ->
+                                        trigger.placeName.takeIf { it.isNotBlank() }?.let { stringResource(R.string.diy_trigger_arrive_location_named, it) }
+                                            ?: stringResource(trigger.title)
+                                    is Trigger.LeaveLocation ->
+                                        trigger.placeName.takeIf { it.isNotBlank() }?.let { stringResource(R.string.diy_trigger_leave_location_named, it) }
+                                            ?: stringResource(trigger.title)
+                                    else -> trigger?.title?.let { stringResource(it) }
                                 }
 
                             Automation.Type.ACTION_SHORTCUT -> stringResource(R.string.diy_create_action_shortcut_title)

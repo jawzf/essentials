@@ -120,6 +120,34 @@ sealed interface Trigger {
     }
 
     @Keep
+    data class ArriveAtLocation(
+        @SerializedName("latitude") val latitude: Double = 0.0,
+        @SerializedName("longitude") val longitude: Double = 0.0,
+        @SerializedName("radiusMeters") val radiusMeters: Int = DEFAULT_LOCATION_RADIUS_METERS,
+        @SerializedName("placeName") val placeName: String = "",
+    ) : Trigger {
+        override val title: Int get() = R.string.diy_trigger_arrive_location
+        override val icon: Int get() = R.drawable.rounded_location_on_24
+        override val isConfigurable: Boolean get() = true
+        override val permissions: List<String>
+            get() = listOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    }
+
+    @Keep
+    data class LeaveLocation(
+        @SerializedName("latitude") val latitude: Double = 0.0,
+        @SerializedName("longitude") val longitude: Double = 0.0,
+        @SerializedName("radiusMeters") val radiusMeters: Int = DEFAULT_LOCATION_RADIUS_METERS,
+        @SerializedName("placeName") val placeName: String = "",
+    ) : Trigger {
+        override val title: Int get() = R.string.diy_trigger_leave_location
+        override val icon: Int get() = R.drawable.rounded_logout_24
+        override val isConfigurable: Boolean get() = true
+        override val permissions: List<String>
+            get() = listOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    }
+
+    @Keep
     data object PowerSavingOn : Trigger {
         override val title: Int = R.string.diy_trigger_power_saving_on
         override val icon: Int = R.drawable.rounded_battery_android_frame_shield_24
@@ -129,5 +157,11 @@ sealed interface Trigger {
     data object PowerSavingOff : Trigger {
         override val title: Int = R.string.diy_trigger_power_saving_off
         override val icon: Int = R.drawable.rounded_battery_android_frame_shield_24
+    }
+
+    companion object {
+        const val DEFAULT_LOCATION_RADIUS_METERS = 200
+        const val MIN_LOCATION_RADIUS_METERS = 100
+        const val MAX_LOCATION_RADIUS_METERS = 5000
     }
 }

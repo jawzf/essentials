@@ -18,6 +18,7 @@ import com.sameerasw.essentials.services.automation.executors.CombinedActionExec
 import com.sameerasw.essentials.services.automation.modules.AutomationModule
 import com.sameerasw.essentials.services.automation.modules.BluetoothModule
 import com.sameerasw.essentials.services.automation.modules.DisplayModule
+import com.sameerasw.essentials.services.automation.modules.LocationModule
 import com.sameerasw.essentials.services.automation.modules.PowerModule
 import com.sameerasw.essentials.services.automation.modules.TimeModule
 import com.sameerasw.essentials.services.automation.modules.CalendarModule
@@ -112,6 +113,7 @@ object AutomationManager {
         val bluetoothAutomations = mutableListOf<Automation>()
         val wifiAutomations = mutableListOf<Automation>()
         val calendarAutomations = mutableListOf<Automation>()
+        val locationAutomations = mutableListOf<Automation>()
 
         enabledAutomations.forEach { automation ->
             when (automation.type) {
@@ -140,6 +142,11 @@ object AutomationManager {
                         is Trigger.WifiConnected, is Trigger.WifiDisconnected -> {
                             requiredModuleIds.add(WifiModule.ID)
                             wifiAutomations.add(automation)
+                        }
+
+                        is Trigger.ArriveAtLocation, is Trigger.LeaveLocation -> {
+                            requiredModuleIds.add(LocationModule.ID)
+                            locationAutomations.add(automation)
                         }
 
                         else -> {}
@@ -262,6 +269,17 @@ object AutomationManager {
             module.updateAutomations(calendarAutomations)
         } else {
             activeModules.remove(CalendarModule.ID)?.stop(context)
+        }
+
+        // Location Module
+        if (requiredModuleIds.contains(LocationModule.ID)) {
+            val module =
+                activeModules.getOrPut(LocationModule.ID) {
+                    LocationModule().also { it.start(context) }
+                }
+            module.updateAutomations(locationAutomations)
+        } else {
+            activeModules.remove(LocationModule.ID)?.stop(context)
         }
     }
 
