@@ -68,6 +68,7 @@ import com.sameerasw.essentials.domain.model.SystemShortcutsState
 import com.sameerasw.essentials.island.service.OverlayLifecycleOwner
 import com.sameerasw.essentials.services.automation.executors.CombinedActionExecutor
 import com.sameerasw.essentials.ui.activities.LockscreenActionActivity
+import com.sameerasw.essentials.utils.ActivityLauncherUtil
 import com.sameerasw.essentials.utils.HapticUtil
 import com.sameerasw.essentials.utils.LockscreenShortcutDetector
 import kotlinx.coroutines.CoroutineScope
@@ -232,7 +233,12 @@ class LockscreenShortcutsHandler(
                     false
                 }
             }
-        val app = (action as? Action.OpenApp)?.let { loadApp(it.packageName) }
+        val app =
+            when (action) {
+                is Action.OpenApp -> loadApp(action.packageName)
+                is Action.OpenActivity -> loadActivity(action)
+                else -> null
+            }
         val label =
             service.getString(R.string.lockscreen_shortcut_content_desc, app?.label ?: service.getString(action.title))
         container.addView(
@@ -308,6 +314,15 @@ class LockscreenShortcutsHandler(
         } catch (_: Exception) {
             null
         }
+    }
+
+    private fun loadActivity(action: Action.OpenActivity): AppInfo? {
+        val size = (APP_ICON_SIZE_DP * service.resources.displayMetrics.density).toInt()
+        val icon = ActivityLauncherUtil.loadIcon(service, action.packageName, action.className, size) ?: return null
+        return AppInfo(
+            label = action.label.ifBlank { service.getString(action.title) },
+            icon = icon.asImageBitmap(),
+        )
     }
 
     // These would open behind the keyguard without unlocking first
