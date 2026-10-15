@@ -52,6 +52,7 @@ import com.sameerasw.essentials.services.handlers.StatusGlanceHandler
 import com.sameerasw.essentials.services.handlers.VolumeStepsHandler
 import com.sameerasw.essentials.services.receivers.FlashlightActionReceiver
 import com.sameerasw.essentials.utils.FreezeManager
+import com.sameerasw.essentials.utils.media.AppVolumeController
 import com.sameerasw.essentials.utils.performHapticFeedback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -300,6 +301,10 @@ class ScreenOffAccessibilityService :
                 key == SettingsRepository.KEY_LOCKSCREEN_SHORTCUT_RIGHT_ACTIONS
             ) {
                 lockscreenShortcutsHandler.updateState()
+            } else if (key == SettingsRepository.KEY_APP_VOLUME_ENABLED ||
+                key == SettingsRepository.KEY_APP_VOLUME_LEVELS
+            ) {
+                AppVolumeController.updateState(this)
             }
         }
 
@@ -338,6 +343,7 @@ class ScreenOffAccessibilityService :
         smartPixelsHandler.init()
         duoOverlayHandler.init()
         statusGlanceHandler.init()
+        AppVolumeController.updateState(this)
         setupReceivers()
     }
 
@@ -531,6 +537,7 @@ class ScreenOffAccessibilityService :
         }
         LiveUpdateSnoozer.release()
         volumeStepsHandler.stop()
+        AppVolumeController.stop()
         flashlightHandler.unregister()
         notificationLightingHandler.removeOverlay()
         ambientGlanceHandler.removeOverlay()
