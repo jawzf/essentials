@@ -262,7 +262,7 @@ class MainViewModel : ViewModel() {
     val isIslandCompactHideStatusBar = mutableStateOf(false)
     val isIslandHideWhenScreenOff = mutableStateOf(true)
     val islandTimeoutMs = mutableLongStateOf(4500L)
-    val isIslandLineStageEnabled = mutableStateOf(true)
+    val isIslandLineStageEnabled = mutableStateOf(false)
     val isIslandMediaPeekSongChange = mutableStateOf(true)
     val isIslandMediaKeepWhenPaused = mutableStateOf(true)
     val isIslandMediaShowPrevious = mutableStateOf(false)

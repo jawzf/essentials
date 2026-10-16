@@ -4264,7 +4264,7 @@ class SettingsRepository(
     fun getIslandFontScale(): Float = getFloat(KEY_ISLAND_FONT_SCALE, 1f)
     fun setIslandFontScale(value: Float) = putFloat(KEY_ISLAND_FONT_SCALE, value)
 
-    fun isIslandLineStageEnabled(): Boolean = getBoolean(KEY_ISLAND_LINE_STAGE_ENABLED, true)
+    fun isIslandLineStageEnabled(): Boolean = getBoolean(KEY_ISLAND_LINE_STAGE_ENABLED, false)
     fun setIslandLineStageEnabled(enabled: Boolean) = putBoolean(KEY_ISLAND_LINE_STAGE_ENABLED, enabled)
 
     fun getIslandPeekDurationMs(): Long = getLong(KEY_ISLAND_PEEK_DURATION_MS, 3500L)
