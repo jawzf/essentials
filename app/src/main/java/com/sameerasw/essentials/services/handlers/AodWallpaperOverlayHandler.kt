@@ -220,8 +220,39 @@ class AodWallpaperOverlayHandler(
             setScale(scale, scale)
             postTranslate((w - src.width * scale) / 2f, (h - src.height * scale) / 2f)
         }
-        Canvas(out).drawBitmap(src, matrix, paint)
+        val canvas = Canvas(out)
+        canvas.drawBitmap(src, matrix, paint)
+
+        val shade = darkAccentShade(src)
+        val fadeHeight = h * 0.4f
+        val fadePaint = android.graphics.Paint()
+        fadePaint.shader = android.graphics.LinearGradient(
+            0f, 0f, 0f, fadeHeight, shade, Color.TRANSPARENT, Shader.TileMode.CLAMP,
+        )
+        canvas.drawRect(0f, 0f, w.toFloat(), fadeHeight, fadePaint)
+        fadePaint.shader = android.graphics.LinearGradient(
+            0f, h - fadeHeight, 0f, h.toFloat(), Color.TRANSPARENT, shade, Shader.TileMode.CLAMP,
+        )
+        canvas.drawRect(0f, h - fadeHeight, w.toFloat(), h.toFloat(), fadePaint)
         return out
+    }
+
+    private fun darkAccentShade(bitmap: Bitmap): Int {
+        val palette = try {
+            androidx.palette.graphics.Palette.from(bitmap).maximumColorCount(24).generate()
+        } catch (_: Exception) {
+            null
+        }
+        val accent = palette?.vibrantSwatch?.rgb
+            ?: palette?.lightVibrantSwatch?.rgb
+            ?: palette?.dominantSwatch?.rgb
+            ?: palette?.mutedSwatch?.rgb
+            ?: Color.BLACK
+        val hsv = FloatArray(3)
+        Color.colorToHSV(accent, hsv)
+        hsv[1] = hsv[1].coerceIn(0.6f, 1f)
+        hsv[2] = (hsv[2] * 0.65f).coerceIn(0.4f, 0.65f)
+        return Color.HSVToColor(hsv)
     }
 
     private fun loadHighResArt(metadata: MediaMetadata?): Bitmap? {
