@@ -85,6 +85,9 @@ class AodWallpaperOverlayHandler(
     private var currentDisplayedBitmap: Bitmap? = null
     private var currentArtBitmap: Bitmap? = null
     private var isMediaPlaying = false
+    private var lastSharedArtKey: String? = null
+    private var lastSelfWallpaperSetAt = 0L
+    private var shareJob: Job? = null
 
     private var mediaSessionManager: MediaSessionManager? = null
     private val monitoredControllers = mutableListOf<MediaController>()
@@ -169,6 +172,7 @@ class AodWallpaperOverlayHandler(
 
         if (controller == null || isExcluded) {
             currentArtBitmap = null
+            if (isShareLockActive()) restoreLockWallpaper()
             if (wasPlaying && !nowPlaying && isOverlayAdded && isScreenOff) {
                 scheduleTimeout()
             }
@@ -187,12 +191,150 @@ class AodWallpaperOverlayHandler(
             }
         }
 
+        val metadata = controller.metadata
+        if (!nowPlaying && isShareLockActive()) restoreLockWallpaper()
         handlerScope.launch(Dispatchers.IO) {
-            val art = extractMediaArtwork(controller.metadata, controller)
+            val art = extractMediaArtwork(metadata, controller)
             withContext(Dispatchers.Main) {
                 currentArtBitmap = art
                 evaluateAndApplyDisplayBitmap(animated = isOverlayAdded)
+                if (nowPlaying && art != null) shareArtWithLockScreen(art, metadata)
             }
+        }
+    }
+
+    private fun isShareLockActive(): Boolean =
+        prefs.getBoolean(SettingsRepository.KEY_AOD_WALLPAPER_ENABLED, false) &&
+            prefs.getBoolean(SettingsRepository.KEY_AOD_WALLPAPER_USE_ALBUM_ART, false) &&
+            prefs.getBoolean(SettingsRepository.KEY_AOD_WALLPAPER_SHARE_LOCK, false)
+
+    private fun centerCropToScreen(src: Bitmap): Bitmap {
+        val bounds = (service.getSystemService(Context.WINDOW_SERVICE) as WindowManager).currentWindowMetrics.bounds
+        val w = bounds.width()
+        val h = bounds.height()
+        val scale = maxOf(w.toFloat() / src.width, h.toFloat() / src.height)
+        val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val paint = android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG or android.graphics.Paint.DITHER_FLAG)
+        paint.isFilterBitmap = true
+        val matrix = android.graphics.Matrix().apply {
+            setScale(scale, scale)
+            postTranslate((w - src.width * scale) / 2f, (h - src.height * scale) / 2f)
+        }
+        Canvas(out).drawBitmap(src, matrix, paint)
+        return out
+    }
+
+    private fun loadHighResArt(metadata: MediaMetadata?): Bitmap? {
+        val uriKeys = listOf(
+            MediaMetadata.METADATA_KEY_ALBUM_ART_URI,
+            MediaMetadata.METADATA_KEY_ART_URI,
+            MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI,
+        )
+        for (key in uriKeys) {
+            val uri = metadata?.getString(key)?.takeIf { it.isNotBlank() } ?: continue
+            val parsed = android.net.Uri.parse(uri)
+            if (parsed.scheme != "content" && parsed.scheme != "file") continue
+            try {
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                service.contentResolver.openInputStream(parsed)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+                if (bounds.outWidth <= 0 || bounds.outHeight <= 0) continue
+                var sample = 1
+                while (bounds.outWidth / (sample * 2) >= 1440 && bounds.outHeight / (sample * 2) >= 1440) sample *= 2
+                val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+                service.contentResolver.openInputStream(parsed)?.use { BitmapFactory.decodeStream(it, null, opts) }
+                    ?.let { return it }
+            } catch (_: Exception) {
+            }
+        }
+        return null
+    }
+
+    private fun restoreIfNotPlaying() {
+        if (runtimeState.getInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE) == LOCK_BACKUP_NONE) return
+        val excluded = getExcludedPackages()
+        val playing = try {
+            val msm = service.getSystemService(Context.MEDIA_SESSION_SERVICE) as? MediaSessionManager
+            msm?.getActiveSessions(ComponentName(service, NotificationListener::class.java))
+                ?.any { it.packageName !in excluded && it.playbackState?.state == PlaybackState.STATE_PLAYING } == true
+        } catch (_: Exception) {
+            false
+        }
+        if (!playing) restoreLockWallpaper()
+    }
+
+    private fun shareArtWithLockScreen(art: Bitmap, metadata: MediaMetadata?) {
+        if (!isShareLockActive()) return
+        val key = "${metadata?.getString(MediaMetadata.METADATA_KEY_TITLE)}|" +
+            "${metadata?.getString(MediaMetadata.METADATA_KEY_ARTIST)}|" +
+            "${metadata?.getString(MediaMetadata.METADATA_KEY_ALBUM)}"
+        if (key == lastSharedArtKey) return
+        lastSharedArtKey = key
+        shareJob?.cancel()
+        shareJob = handlerScope.launch(Dispatchers.IO) {
+            try {
+                val wallpaperManager = WallpaperManager.getInstance(service)
+                backupLockWallpaper(wallpaperManager)
+                val rendered = loadHighResArt(metadata)?.takeIf { it.width * it.height > art.width * art.height } ?: art
+                val aligned = centerCropToScreen(rendered)
+                lastSelfWallpaperSetAt = System.currentTimeMillis()
+                wallpaperManager.setBitmap(aligned, null, true, WallpaperManager.FLAG_LOCK)
+                lastSelfWallpaperSetAt = System.currentTimeMillis()
+            } catch (e: Throwable) {
+                Log.e("AodWallpaperOverlay", "Failed to share art with lock screen", e)
+                lastSharedArtKey = null
+            }
+        }
+    }
+
+    private fun backupLockWallpaper(wallpaperManager: WallpaperManager) {
+        if (runtimeState.getInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE) != LOCK_BACKUP_NONE) return
+        val lockId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) wallpaperManager.getWallpaperId(WallpaperManager.FLAG_LOCK) else -1
+        if (lockId <= 0) {
+            runtimeState.edit().putInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_SYSTEM).apply()
+            return
+        }
+        val original = drawableToBitmap(wallpaperManager.getDrawable(WallpaperManager.FLAG_LOCK)) ?: return
+        File(service.filesDir, LOCK_BACKUP_FILE_NAME).outputStream().use {
+            original.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        runtimeState.edit().putInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_FILE).apply()
+    }
+
+    private fun restoreLockWallpaper() {
+        val state = runtimeState.getInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE)
+        if (state == LOCK_BACKUP_NONE) return
+        shareJob?.cancel()
+        lastSharedArtKey = null
+        handlerScope.launch(Dispatchers.IO) {
+            try {
+                val wallpaperManager = WallpaperManager.getInstance(service)
+                val file = File(service.filesDir, LOCK_BACKUP_FILE_NAME)
+                lastSelfWallpaperSetAt = System.currentTimeMillis()
+                if (state == LOCK_BACKUP_FILE && file.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                    if (bitmap != null) wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK)
+                } else if (state == LOCK_BACKUP_SYSTEM) {
+                    wallpaperManager.clear(WallpaperManager.FLAG_LOCK)
+                }
+                lastSelfWallpaperSetAt = System.currentTimeMillis()
+                clearLockBackup()
+                withContext(Dispatchers.Main) { invalidateWallpaperCache() }
+            } catch (e: Throwable) {
+                Log.e("AodWallpaperOverlay", "Failed to restore lock wallpaper", e)
+            }
+        }
+    }
+
+    private fun clearLockBackup() {
+        File(service.filesDir, LOCK_BACKUP_FILE_NAME).delete()
+        runtimeState.edit().putInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE).apply()
+    }
+
+    private fun onSystemWallpaperChanged() {
+        if (System.currentTimeMillis() - lastSelfWallpaperSetAt < SELF_WALLPAPER_CHANGE_WINDOW_MS) return
+        if (runtimeState.getInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE) != LOCK_BACKUP_NONE) {
+            clearLockBackup()
+            lastSharedArtKey = null
         }
     }
 
@@ -261,6 +403,7 @@ class AodWallpaperOverlayHandler(
 
     private val wallpaperChangeReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
+            onSystemWallpaperChanged()
             invalidateWallpaperCache()
         }
     }
@@ -268,6 +411,7 @@ class AodWallpaperOverlayHandler(
     private val wallpaperColorsListener =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             WallpaperManager.OnColorsChangedListener { _, _ ->
+                onSystemWallpaperChanged()
                 invalidateWallpaperCache()
             }
         } else {
@@ -435,6 +579,7 @@ class AodWallpaperOverlayHandler(
 
     fun onScreenOn() {
         isScreenOff = false
+        if (isShareLockActive()) restoreIfNotPlaying()
         handler.removeCallbacks(timeoutRunnable)
         hideOverlay()
     }
@@ -466,6 +611,7 @@ class AodWallpaperOverlayHandler(
     }
 
     fun updateState() {
+        if (!isShareLockActive()) restoreLockWallpaper()
         if (isScreenOff && isDeviceInteractive()) isScreenOff = false
         val enabled = prefs.getBoolean(SettingsRepository.KEY_AOD_WALLPAPER_ENABLED, false)
         if (enabled && isScreenOff && !isSuppressedByPriorityMode()) {
@@ -1185,9 +1331,17 @@ class AodWallpaperOverlayHandler(
                 }
             }
 
+            val backupFile = File(service.filesDir, LOCK_BACKUP_FILE_NAME)
+            val backupState = runtimeState.getInt(KEY_LOCK_BACKUP_STATE, LOCK_BACKUP_NONE)
+            if (backupState == LOCK_BACKUP_FILE && backupFile.exists()) {
+                BitmapFactory.decodeFile(backupFile.absolutePath)?.let { return it }
+            }
+
             val wallpaperManager = WallpaperManager.getInstance(service)
             val drawable: Drawable? =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                if (backupState == LOCK_BACKUP_SYSTEM) {
+                    wallpaperManager.getDrawable(WallpaperManager.FLAG_SYSTEM)
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     wallpaperManager.getDrawable(WallpaperManager.FLAG_LOCK)
                         ?: wallpaperManager.drawable
                 } else {
@@ -1353,6 +1507,12 @@ class AodWallpaperOverlayHandler(
         const val LOCK_SCREEN_MEDIA_KEY = "media_controls_lock_screen"
         const val KEY_SAVED_LOCK_SCREEN_MEDIA = "saved_lock_screen_media"
         const val NO_SAVED_VALUE = -1
+        const val KEY_LOCK_BACKUP_STATE = "lock_wallpaper_backup_state"
+        const val LOCK_BACKUP_NONE = 0
+        const val LOCK_BACKUP_FILE = 1
+        const val LOCK_BACKUP_SYSTEM = 2
+        const val LOCK_BACKUP_FILE_NAME = "lock_wallpaper_backup.png"
+        const val SELF_WALLPAPER_CHANGE_WINDOW_MS = 5000L
         const val CUSTOM_IMAGE_FILE_NAME = "custom_aod_wallpaper.png"
         const val FADE_IN_DURATION_MS = 2000L
         const val FADE_OUT_DURATION_MS = 500L

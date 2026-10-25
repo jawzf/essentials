@@ -411,6 +411,7 @@ class MainViewModel : ViewModel() {
     val isAodWallpaperUseAlbumArt = mutableStateOf(false)
     val isAodWallpaperDisableOnDnd = mutableStateOf(false)
     val isAodWallpaperKeepOnMedia = mutableStateOf(false)
+    val isAodWallpaperShareLock = mutableStateOf(false)
     val isAodWallpaperExtendedMedia = mutableStateOf(false)
     val isAodWallpaperExtendedAppIcon = mutableStateOf(false)
     val aodWallpaperExtendedTextScale = mutableFloatStateOf(1f)
@@ -1422,6 +1423,10 @@ class MainViewModel : ViewModel() {
 
                     SettingsRepository.KEY_AOD_WALLPAPER_USE_ALBUM_ART ->
                         isAodWallpaperUseAlbumArt.value =
+                            settingsRepository.getBoolean(key)
+
+                    SettingsRepository.KEY_AOD_WALLPAPER_SHARE_LOCK ->
+                        isAodWallpaperShareLock.value =
                             settingsRepository.getBoolean(key)
 
                     SettingsRepository.KEY_AOD_WALLPAPER_KEEP_ON_MEDIA ->
@@ -2908,6 +2913,8 @@ class MainViewModel : ViewModel() {
             )
         isAodWallpaperKeepOnMedia.value =
             settingsRepository.isAodWallpaperKeepOnMediaEnabled()
+        isAodWallpaperShareLock.value =
+            settingsRepository.getBoolean(SettingsRepository.KEY_AOD_WALLPAPER_SHARE_LOCK, false)
         isAodWallpaperExtendedMedia.value =
             settingsRepository.isAodWallpaperExtendedMediaEnabled()
         isAodWallpaperExtendedAppIcon.value =
@@ -9681,6 +9688,11 @@ class MainViewModel : ViewModel() {
     fun setAodWallpaperUseAlbumArt(enabled: Boolean) {
         settingsRepository.setAodWallpaperUseAlbumArt(enabled)
         isAodWallpaperUseAlbumArt.value = enabled
+    }
+
+    fun setAodWallpaperShareLock(enabled: Boolean) {
+        settingsRepository.putBoolean(SettingsRepository.KEY_AOD_WALLPAPER_SHARE_LOCK, enabled)
+        isAodWallpaperShareLock.value = enabled
     }
 
     fun setAodWallpaperKeepOnMedia(enabled: Boolean) {

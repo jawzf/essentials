@@ -1597,6 +1597,7 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <string name="settings_translated_texts_desc">%d editado(s) pendiente - presiona para enviar o descartar</string>
     <string name="label_online_help_media">Ayuda para medios en linea</string>
     <string name="feat_aod_wallpaper_use_album_art">Usar la portada del album</string>
+    <string name="feat_aod_wallpaper_share_lock">Share with lock screen wallpaper</string>
     <string name="feat_aod_wallpaper_title">Mostrar fondo de pantalla en AOD</string>
     <string name="icon_network_speed">Velocidad de internet</string>
     <string name="feat_transparent_navigation_bar_desc">Hace que la barra de navegacion sea transparente</string>
