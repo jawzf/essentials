@@ -2036,4 +2036,6 @@ Các tiện ích trong chồng (stack) sẽ tự động chuyển đổi theo b�
     <string name="island_combine_with_duo">Kết hợp với Duo</string>
     <string name="island_desc">Island động</string>
     <string name="duo_combine_with_island">Kết hợp với Island</string>
+    <string name="disable_interactions_in_full_screen_title">Vô hiệu hóa tương tác ở chế độ toàn màn hình</string>
+    <string name="duo_tap_for_brief_title">Chạm để xem tóm tắt</string>
 </resources>
