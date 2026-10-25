@@ -2033,4 +2033,7 @@ Các tiện ích trong chồng (stack) sẽ tự động chuyển đổi theo b�
     <string name="diy_cts_method_title">Trigger method</string>
     <string name="diy_cts_method_accessibility">Accessibility</string>
     <string name="diy_cts_method_shizuku">Shizuku / Root</string>
+    <string name="island_combine_with_duo">Kết hợp với Duo</string>
+    <string name="island_desc">Island động</string>
+    <string name="duo_combine_with_island">Kết hợp với Island</string>
 </resources>
