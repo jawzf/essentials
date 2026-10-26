@@ -651,7 +651,7 @@
     <string name="btn_enable_keyboard">Bật trong cài đặt</string>
     <string name="btn_select_keyboard">Chuyển sang thiết yếu</string>
     <string name="label_enabled">Đã bật</string>
-    <string name="label_disabled">Tàn tật</string>
+    <string name="label_disabled">Hủy kích hoạt</string>
     <string name="tile_adaptive_brightness">Độ sáng thích ứng</string>
     <string name="tile_maps_power_saving">Tiết kiệm năng lượng của bản đồ</string>
     <string name="action_search">Tìm kiếm</string>
