@@ -77,7 +77,7 @@
     <string name="essentials_on_display_force_fill_while_charging_title">Şarjdayken her zaman kullan</string>
     <string name="essentials_on_display_force_fill_while_charging_desc">Seçilen moddan bağımsız olarak, cihaz prize takılıyken Dolum modunu zorlar</string>
     <string name="label_size">Boyut</string>
-    <string name="feat_notification_glance_title">Bildirim bakışı</string>
+    <string name="feat_notification_glance_title">Bildirimlere göz atma</string>
     <string name="feat_notification_glance_desc">Bildirimler beklemedeyken AOD\'yi açık tutun</string>
     <string name="notification_glance_same_as_lighting_title">Bildirim aydınlatmasıyla aynı uygulamalar</string>
     <string name="notification_glance_desc">Bu özellik, seçilen bir uygulamadan bir bildirim geldiğinde Daima Açık Ekran\'ı dinamik olarak etkinleştirecek ve eşleşen tüm bildirimler kapatıldığında bu özelliği devre dışı bırakacaktır. Uygulamaları seçin veya bildirim aydınlatmasıyla aynı seçimi kullanın.</string>
@@ -1359,7 +1359,7 @@ Bazı ayarların değişikliklerin yansıması için gelişmiş izinler veya bel
     <string name="search_refresh_rate_range_desc">Minimum ve en yüksek yenileme hızlarını ayrı ayrı yapılandırın</string>
     <string name="search_refresh_rate_reset_title">Yenileme Hızını Sıfırla</string>
     <string name="search_refresh_rate_reset_desc">Özel yenileme hızı ayarını temizler</string>
-    <string name="feat_aod_force_turn_off_title">AOD\'yi kapatmaya zorla</string>
+    <string name="feat_aod_force_turn_off_title">AOD kapatmaya zorla</string>
     <string name="feat_aod_force_turn_off_desc">Bildirim olmadığında AOD\'yi kapatmaya zorlayın. Erişilebilirlik izni gerektirir.</string>
     <string name="feat_auto_accessibility_title">Otomatik erişilebilirlik</string>
     <string name="feat_auto_accessibility_desc">WRITE_SECURE_SETTINGS kullanılarak eksikse, uygulama başlatıldığında erişilebilirlik iznini otomatik olarak verir.</string>
@@ -2020,4 +2020,10 @@ Bazı seçenekler Shizuku veya erişilebilirlik izni gerektirir ve sonuçlar cih
     <string name="island_media_keep_when_paused_title">Duraklatıldığında da aktif tut</string>
     <string name="island_media_show_previous_title">Önceki parça düğmesini göster</string>
     <string name="island_media_show_like_title">\"Beğen\" düğmesini göster</string>
+    <string name="notification_lighting_ripple_sparkle_title">Işıltı</string>
+    <string name="notification_lighting_ripple_sparkle_count_title">Işıltı sayısı</string>
+    <string name="notification_lighting_ripple_sparkle_size_title">Işıltı boyutu</string>
+    <string name="flashlight_speed_label">Hız</string>
+    <string name="notification_lighting_ripple_repeat_count_title">Tekrar sayısı</string>
+    <string name="notification_lighting_ripple_wave_size_title">Dalga boyutu</string>
 </resources>
