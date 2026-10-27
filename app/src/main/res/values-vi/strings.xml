@@ -31,7 +31,7 @@
     <string name="setting_use_usage_access_title">Sử dụng quyền truy cập</string>
     <string name="setting_use_usage_access_desc">Thay vì các tính năng hỗ trợ tiếp cận (Đóng băng ứng dụng, Khóa ứng dụng, Chế độ ánh sáng ban đêm động)</string>
     <!-- Button Remap -->
-    <string name="button_remap_enable_title">Bật bản đồ lại nút</string>
+    <string name="button_remap_enable_title">Bật gán lại chức năng nút</string>
     <string name="button_remap_use_shizuku_title">Sử dụng Shizuku</string>
     <string name="button_remap_use_shizuku_desc">Hoạt động khi tắt màn hình (Được khuyến nghị)</string>
     <string name="shizuku_not_running_toast">Shizuku không chạy</string>
@@ -420,7 +420,7 @@
     <string name="feat_snooze_notifications_desc">Tạm ẩn thông báo liên tục</string>
     <string name="feat_qs_tiles_title">Ô cài đặt nhanh</string>
     <string name="feat_qs_tiles_desc">Xem tất cả</string>
-    <string name="feat_button_remap_title">Ánh xạ lại nút</string>
+    <string name="feat_button_remap_title">Gán lại chức năng nút</string>
     <string name="feat_button_remap_desc">Ánh xạ lại các hành động của nút phần cứng</string>
     <string name="feat_dynamic_night_light_title">Đèn ngủ năng động</string>
     <string name="feat_dynamic_night_light_desc">Chuyển đổi ánh sáng ban đêm dựa trên ứng dụng</string>
@@ -1466,7 +1466,7 @@ Sử dụng các phím tắt tùy chỉnh để đảm bảo các cài đặt đ
     <string name="feat_power_battery_title">Năng lượng và pin</string>
     <string name="feat_power_battery_desc">Cấu hình các chính sách tiết kiệm năng lượng</string>
     <string name="feat_flashlight_title">Đèn pin</string>
-    <string name="feat_flashlight_desc">Brightness, fading and safety controls</string>
+    <string name="feat_flashlight_desc">Điều khiển độ sáng, độ mờ và an toàn</string>
     <string name="feat_sync_sound_mode_title">Đồng bộ chế độ âm thanh</string>
     <string name="feat_sync_sound_mode_desc">Tự động đồng bộ với đồng hồ</string>
     <string name="feat_watch_controls_title">Tùy chỉnh</string>
