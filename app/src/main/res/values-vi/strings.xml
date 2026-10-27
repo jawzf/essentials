@@ -1618,7 +1618,7 @@ Cần có quyền quản trị thiết bị nếu sử dụng chế độ khóa.
     <string name="feat_sim_names_title">Tên SIM</string>
     <string name="feat_sim_names_desc">Đổi tên hiển thị của nhà mạng cho các thẻ SIM đang hoạt động</string>
     <string name="setting_location_reached_full_screen_alarm_title">Báo thức toàn màn hình</string>
-    <string name="setting_location_reached_full_screen_alarm_desc">Phát nhạc chuông báo thức và hiển thị thông báo toàn màn hình khi có cuộc gọi đến</string>
+    <string name="setting_location_reached_full_screen_alarm_desc">Phát nhạc chuông báo thức và hiển thị thông báo toàn màn hình khi đến nơi</string>
     <string name="label_ripple_animation">Hoạt ảnh gợn sóng</string>
     <string name="label_motion_blur">Hiệu ứng mờ chuyển động</string>
     <string name="setting_app_icon_title">Biểu tượng ứng dụng</string>
