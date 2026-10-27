@@ -1701,7 +1701,7 @@ Zudem muss die Einstellung unter Umständen mehrfach angewendet werden, damit si
     <string name="status_glance_show_calendar_title">Kalenderereignisse</string>
     <string name="duo_show_media_title">Medienwiedergabe</string>
     <string name="duo_show_time_title">Uhrzeit</string>
-    <string name="duo_show_battery_title">Akku</string>
+    <string name="duo_show_battery_title">Batterie</string>
     <string name="status_glance_calendar_timeframe_title">Anstehende Ereignisse anzeigen in</string>
     <string name="status_glance_battery_icon_size_title">Größe des Akkusymbols</string>
     <string name="status_glance_battery_show_otherwise_title">Andernfalls anzeigen</string>
@@ -2013,4 +2013,8 @@ Die Stufen können nur von der normalen Lautstärke abwärts, niemals darüber h
     <string name="diy_cts_method_title">Trigger method</string>
     <string name="diy_cts_method_accessibility">Accessibility</string>
     <string name="diy_cts_method_shizuku">Shizuku / Root</string>
+    <string name="island_section_placement">Platzierung </string>
+    <string name="island_section_visuals">Visuelle </string>
+    <string name="island_section_duration">Dauer</string>
+    <string name="island_combine_with_duo">Kombinieren mit Duo</string>
 </resources>
