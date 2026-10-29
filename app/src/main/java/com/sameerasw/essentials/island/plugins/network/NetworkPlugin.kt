@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.network
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import com.sameerasw.essentials.utils.NetworkUtil
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -182,11 +184,11 @@ class NetworkPlugin : BaseIslandPlugin() {
                 placement = CompactPlacement.Dynamic,
                 compact = listOf(
                     CompactCell("network.wifi.icon") {
-                        IslandIcon(R.drawable.rounded_android_wifi_3_bar_24, size = 18.dp, tint = tint ?: MaterialTheme.colorScheme.primary)
+                        IslandIcon(R.drawable.rounded_android_wifi_3_bar_24, size = 18.dp, tint = tint ?: islandAccent())
                     },
                 ),
                 line = LineContent(
-                    icon = { IslandIcon(R.drawable.rounded_android_wifi_3_bar_24, tint = tint ?: MaterialTheme.colorScheme.primary) },
+                    icon = { IslandIcon(R.drawable.rounded_android_wifi_3_bar_24, tint = tint ?: islandAccent()) },
                     start = context.getString(if (e.connected) R.string.island_network_connected_to else R.string.island_network_disconnected_from),
                     end = e.name,
                 ),
@@ -199,7 +201,7 @@ class NetworkPlugin : BaseIslandPlugin() {
                 placement = CompactPlacement.Dynamic,
                 compact = listOf(
                     CompactCell("network.airplane.icon") {
-                        IslandIcon(R.drawable.rounded_flight_24, size = 18.dp, tint = MaterialTheme.colorScheme.primary)
+                        IslandIcon(R.drawable.rounded_flight_24, size = 18.dp, tint = islandAccent())
                     },
                 ),
             )

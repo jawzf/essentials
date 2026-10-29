@@ -387,6 +387,20 @@ fun IslandVisualsSettingsUI(
                 modifier = Modifier.highlight(highlightSetting == "island_font_scale"),
             )
 
+            ConfigSliderItem(
+                title = stringResource(R.string.island_animation_speed_title),
+                value = viewModel.islandAnimationSpeed.floatValue,
+                onValueChange = {
+                    HapticUtil.performUIHaptic(view)
+                    viewModel.setIslandAnimationSpeed(it)
+                },
+                valueRange = 0.5f..1.5f,
+                increment = 0.1f,
+                iconRes = R.drawable.rounded_format_size_24,
+                valueFormatter = { "${(it * 100).toInt()}%" },
+                modifier = Modifier.highlight(highlightSetting == "island_animation_speed"),
+            )
+
 
             ConfigSliderItem(
                 title = stringResource(R.string.island_expanded_roundness_title),
@@ -1165,6 +1179,7 @@ fun IslandNotificationSettingsUI(
                 val peekStyle = viewModel.islandNotifPeekStyle.value
                 val fullLabel = stringResource(R.string.island_notif_peek_style_full)
                 val compactLabel = stringResource(R.string.island_notif_peek_style_compact)
+                val expandedLabel = stringResource(R.string.island_notif_peek_style_expanded)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1182,6 +1197,7 @@ fun IslandNotificationSettingsUI(
                         text = stringResource(
                             when (peekStyle) {
                                 SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_COMPACT -> R.string.island_notif_condensed_info_desc
+                                SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_EXPANDED -> R.string.island_notif_peek_style_expanded_desc
                                 else -> R.string.island_notif_peek_style_full_desc
                             },
                         ),
@@ -1193,12 +1209,14 @@ fun IslandNotificationSettingsUI(
                         items = listOf(
                             SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_FULL,
                             SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_COMPACT,
+                            SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_EXPANDED,
                         ),
                         selectedItem = peekStyle,
                         onItemSelected = { viewModel.setIslandNotifPeekStyle(it) },
                         labelProvider = {
                             when (it) {
                                 SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_COMPACT -> compactLabel
+                                SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_EXPANDED -> expandedLabel
                                 else -> fullLabel
                             }
                         },

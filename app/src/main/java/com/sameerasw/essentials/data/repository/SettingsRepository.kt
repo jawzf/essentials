@@ -429,6 +429,7 @@ class SettingsRepository(
         const val KEY_AOD_WALLPAPER_USE_ALBUM_ART = "aod_wallpaper_use_album_art"
         const val KEY_AOD_WALLPAPER_DISABLE_ON_DND = "aod_wallpaper_disable_on_dnd"
         const val KEY_AOD_WALLPAPER_KEEP_ON_MEDIA = "aod_wallpaper_keep_on_media"
+        const val KEY_AOD_WALLPAPER_SHARE_LOCK = "aod_wallpaper_share_lock"
         const val KEY_AOD_WALLPAPER_MEDIA_EXCLUDED_APPS = "aod_wallpaper_media_excluded_apps"
         const val KEY_AOD_WALLPAPER_EXTENDED_MEDIA = "aod_wallpaper_extended_media"
         const val KEY_AOD_WALLPAPER_EXTENDED_APP_ICON = "aod_wallpaper_extended_app_icon"
@@ -601,6 +602,7 @@ class SettingsRepository(
         const val KEY_ISLAND_DEVICES_BATTERY_ONLY_LOW = "island_devices_battery_only_low"
         const val KEY_ISLAND_EXPANDED_SCALE = "island_expanded_scale"
         const val KEY_ISLAND_FONT_SCALE = "island_font_scale"
+        const val KEY_ISLAND_ANIMATION_SPEED = "island_animation_speed"
         const val KEY_ISLAND_HIDE_IN_OWNER_APP = "island_hide_in_owner_app"
         const val KEY_ISLAND_HIDE_ON_SHADE = "island_hide_on_shade"
         const val KEY_ISLAND_KEEP_ON_LANDSCAPE = "island_keep_on_landscape"
@@ -687,6 +689,7 @@ class SettingsRepository(
         const val ISLAND_NOTIF_PEEK_STYLE_FULL = "full"
         const val ISLAND_NOTIF_PEEK_STYLE_COMPACT = "compact"
         const val ISLAND_NOTIF_PEEK_STYLE_MINIMAL = "minimal"
+        const val ISLAND_NOTIF_PEEK_STYLE_EXPANDED = "expanded"
         const val KEY_ISLAND_NOTIF_KEEP_PROGRESS = "island_notif_keep_progress"
         const val KEY_ISLAND_NOTIF_QUEUE = "island_notif_queue"
         const val KEY_ISLAND_NOTIF_QUEUE_STYLE = "island_notif_queue_style"
@@ -700,7 +703,9 @@ class SettingsRepository(
         const val KEY_ISLAND_SHOW_NOTIFICATIONS = "island_show_notifications"
         const val KEY_ISLAND_NOTIF_HUB = "island_notif_hub"
         const val KEY_ISLAND_NOTIF_HUB_ICONS = "island_notif_hub_icons"
+        const val KEY_ISLAND_NOTIF_HUB_CHAT_PICTURES = "island_notif_hub_chat_pictures"
         const val KEY_ISLAND_NOTIF_HUB_ORDER = "island_notif_hub_order"
+        const val KEY_ISLAND_NOTIF_HUB_OVERFLOW = "island_notif_hub_overflow"
         const val KEY_ISLAND_NOTIF_HUB_SILENT = "island_notif_hub_silent"
         const val KEY_ISLAND_NOTIF_HUB_GROUP = "island_notif_hub_group"
         const val ISLAND_NOTIF_HUB_ORDER_DYNAMIC = "dynamic"
@@ -4363,6 +4368,9 @@ class SettingsRepository(
 
     fun setIslandHideOnShadeEnabled(enabled: Boolean) = putBoolean(KEY_ISLAND_HIDE_ON_SHADE, enabled)
 
+    fun getIslandAnimationSpeed(): Float = getFloat(KEY_ISLAND_ANIMATION_SPEED, 1f)
+    fun setIslandAnimationSpeed(value: Float) = putFloat(KEY_ISLAND_ANIMATION_SPEED, value)
+
     fun getIslandFontScale(): Float = getFloat(KEY_ISLAND_FONT_SCALE, 1f)
     fun setIslandFontScale(value: Float) = putFloat(KEY_ISLAND_FONT_SCALE, value)
 
@@ -4390,6 +4398,9 @@ class SettingsRepository(
     fun isIslandNotifHubIncludeSilent(): Boolean = getBoolean(KEY_ISLAND_NOTIF_HUB_SILENT, false)
     fun setIslandNotifHubIncludeSilent(enabled: Boolean) = putBoolean(KEY_ISLAND_NOTIF_HUB_SILENT, enabled)
 
+    fun isIslandNotifHubPreferChatPictures(): Boolean = getBoolean(KEY_ISLAND_NOTIF_HUB_CHAT_PICTURES, true)
+    fun setIslandNotifHubPreferChatPictures(enabled: Boolean) = putBoolean(KEY_ISLAND_NOTIF_HUB_CHAT_PICTURES, enabled)
+
     fun isIslandNotifHubGroupByApps(): Boolean = getBoolean(KEY_ISLAND_NOTIF_HUB_GROUP, false)
     fun setIslandNotifHubGroupByApps(enabled: Boolean) = putBoolean(KEY_ISLAND_NOTIF_HUB_GROUP, enabled)
 
@@ -4399,6 +4410,11 @@ class SettingsRepository(
             ?: ISLAND_NOTIF_HUB_ORDER_DYNAMIC
 
     fun setIslandNotifHubOrder(value: String) = putString(KEY_ISLAND_NOTIF_HUB_ORDER, value)
+
+    fun getIslandNotifHubOverflow(): com.sameerasw.essentials.island.model.QueueOverflow =
+        com.sameerasw.essentials.island.model.QueueOverflow.entries.firstOrNull { it.name == getString(KEY_ISLAND_NOTIF_HUB_OVERFLOW, null) }
+            ?: com.sameerasw.essentials.island.model.QueueOverflow.Number
+    fun setIslandNotifHubOverflow(value: com.sameerasw.essentials.island.model.QueueOverflow) = putString(KEY_ISLAND_NOTIF_HUB_OVERFLOW, value.name)
 
     // 0 = fit to the available width
     fun getIslandNotifHubIcons(): Int = getInt(KEY_ISLAND_NOTIF_HUB_ICONS, 0).coerceIn(0, 8)
@@ -4488,6 +4504,7 @@ class SettingsRepository(
     fun getIslandNotifPeekStyle(): String =
         when (getString(KEY_ISLAND_NOTIF_PEEK_STYLE, null)) {
             ISLAND_NOTIF_PEEK_STYLE_COMPACT -> ISLAND_NOTIF_PEEK_STYLE_COMPACT
+            ISLAND_NOTIF_PEEK_STYLE_EXPANDED -> ISLAND_NOTIF_PEEK_STYLE_EXPANDED
             null -> if (getBoolean(KEY_ISLAND_NOTIF_CONDENSED_INFO, false)) ISLAND_NOTIF_PEEK_STYLE_COMPACT else ISLAND_NOTIF_PEEK_STYLE_FULL
             else -> ISLAND_NOTIF_PEEK_STYLE_FULL
         }

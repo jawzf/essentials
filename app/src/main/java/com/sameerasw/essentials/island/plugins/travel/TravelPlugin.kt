@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.travel
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Box
@@ -77,11 +79,11 @@ class TravelPlugin : BaseIslandPlugin() {
                 priority = IslandPriority.TRAVEL,
                 placement = CompactPlacement.Dynamic,
                 compact = listOf(
-                    CompactCell("travel.icon") { IslandIcon(trip.iconRes, size = 18.dp, tint = MaterialTheme.colorScheme.primary) },
+                    CompactCell("travel.icon") { IslandIcon(trip.iconRes, size = 18.dp, tint = islandAccent()) },
                     CompactCell("travel.distance") { RollingText(trip.distance) },
                 ),
                 line = LineContent(
-                    icon = { IslandIcon(trip.iconRes, tint = MaterialTheme.colorScheme.primary) },
+                    icon = { IslandIcon(trip.iconRes, tint = islandAccent()) },
                     start = trip.name,
                     end = trip.distance,
                 ),
@@ -133,7 +135,7 @@ class TravelPlugin : BaseIslandPlugin() {
     private fun TravelExpanded(trip: Trip, onTogglePause: () -> Unit, onStop: () -> Unit, scope: IslandExpandedScope) {
         val spec = scope.spec
         val sidePadding = spec.expandedPadding + spec.expandedCorner * 0.35f
-        val accent = MaterialTheme.colorScheme.primary
+        val accent = islandAccent()
         Box(propagateMinConstraints = true) {
             Column(Modifier.fillMaxWidth().padding(spec.expandedOutset)) {
                 Spacer(Modifier.height(spec.expandedTopPadding))

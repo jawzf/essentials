@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.calendar
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import com.sameerasw.essentials.data.repository.SettingsRepository
 import com.sameerasw.essentials.island.IslandTimeFormat
 import com.sameerasw.essentials.island.ui.squareFit
@@ -63,7 +65,7 @@ fun CalendarExpanded(
     val spec = scope.spec
     val context = LocalContext.current
     val sidePadding = spec.expandedPadding + spec.expandedCorner * 0.35f
-    val calendarColor = event.calendarColor?.let { Color(soften(it)) } ?: MaterialTheme.colorScheme.primary
+    val calendarColor = event.calendarColor?.let { Color(soften(it)) } ?: islandAccent()
     val timeSettings = remember { SettingsRepository(context) }
     val timeText = { millis: Long -> IslandTimeFormat.format(context, timeSettings, millis) }
     val timeRange = when {

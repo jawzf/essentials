@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.animation.togetherWith
@@ -119,8 +120,10 @@ fun CompactTemplate(
     val cells = buildMap {
         state.items.values.forEach { item -> item.compact.forEach { put(it.key, item.key to it) } }
     }
+    val splitAcrossCamera = spec.growDirection == 0 && state.arrangement.visibleItems.size == 1 &&
+        state.arrangement.before.isNotEmpty() && state.arrangement.after.isNotEmpty()
     fun chipColorOf(itemKey: String): Color? =
-        state.items[itemKey]?.takeIf { spec.chips && it.chip }?.let { it.accent ?: iconColor ?: primary }
+        state.items[itemKey]?.takeIf { spec.chips && it.chip && !splitAcrossCamera }?.let { it.accent ?: iconColor ?: primary }
 
     fun group(keys: List<String>, before: Boolean): List<SlotUnit> {
         val units = mutableListOf<MutableList<CellEntry>>()
@@ -179,17 +182,20 @@ fun CompactTemplate(
                 val to = targetState?.let { known[it] }
                 val swap = from != null && to != null && from.key !in to.sideKeys && to.key !in from.sideKeys
                 val up = (to?.priority ?: 0) < (from?.priority ?: 0)
+                val morph = from != null && to != null && from.itemKey == to.itemKey
                 val spec2 = when {
+                    morph -> fadeIn(motionTween(240, delayMillis = 40)) + scaleIn(IslandMotion.compactFloat(), initialScale = 0.9f) togetherWith
+                        fadeOut(motionTween(180)) + scaleOut(IslandMotion.compactFloat(), targetScale = 0.9f)
                     swap -> (fadeIn(IslandMotion.contentIn()) + slideInVertically(IslandMotion.compactOffset) { if (up) it else -it })
                         .togetherWith(fadeOut(IslandMotion.contentOut()) + slideOutVertically(IslandMotion.compactOffset) { if (up) -it else it })
                     else -> (
-                        fadeIn(IslandMotion.contentIn()) +
+                        fadeIn(motionTween(260, delayMillis = 60)) +
                             (if (edgeAnchored) EnterTransition.None else slideInHorizontally(IslandMotion.compactOffset, towardCamera)) +
-                            scaleIn(IslandMotion.compactFloat(), initialScale = 0.6f)
+                            scaleIn(IslandMotion.compactFloat(), initialScale = 0.5f)
                         ).togetherWith(
-                            fadeOut(IslandMotion.contentOut()) +
+                            fadeOut(motionTween(220)) +
                                 (if (edgeAnchored) ExitTransition.None else slideOutHorizontally(IslandMotion.compactOffset, towardCamera)) +
-                                scaleOut(IslandMotion.compactFloat(), targetScale = 0.6f),
+                                scaleOut(IslandMotion.compactFloat(), targetScale = 0.5f),
                         )
                 }
                 spec2.using(SizeTransform(clip = true) { _, _ -> IslandMotion.compactSize })

@@ -2886,6 +2886,7 @@
     <string name="feat_aod_wallpaper_extended_media">Show playback info</string>
     <string name="feat_aod_wallpaper_extended_app_icon">Replace note with app icon</string>
     <string name="feat_aod_wallpaper_use_album_art">Use album art</string>
+    <string name="feat_aod_wallpaper_share_lock">Share with lock screen wallpaper</string>
     <string name="feat_aod_wallpaper_disable_on_dnd">Disable on DND</string>
     <string name="feat_aod_wallpaper_media_apps">Skip media apps</string>
     <string name="perm_storage_title">All files access</string>
@@ -3194,6 +3195,7 @@
     <string name="island_battery_style_icon">Icon</string>
     <string name="slider_value_label">Value</string>
     <string name="island_font_scale_title">Font size</string>
+    <string name="island_animation_speed_title">Animation speed</string>
     <string name="island_hide_in_owner_app_title">Hide complication inside the app</string>
     <string name="island_hide_on_shade_title">Hide when status bar is expanded</string>
     <string name="island_hide_status_bar_title">Hide status bar</string>
@@ -3443,11 +3445,18 @@
     <string name="island_notif_condensed_info_title">Peek style</string>
     <string name="island_notif_condensed_info_desc">App icon and title only. Tap to expand for the content and actions</string>
     <string name="island_notif_peek_style_compact">Compact</string>
-    <string name="island_notif_peek_style_full">Full</string>
+    <string name="island_notif_peek_style_full">Wide</string>
     <string name="island_notif_peek_style_full_desc">Title and message</string>
+    <string name="island_notif_peek_style_expanded">Expanded</string>
+    <string name="island_notif_peek_style_expanded_desc">Opens expanded with the content and actions</string>
     <string name="island_notif_peek_style_search_desc">Full or compact peeks</string>
     <string name="island_notif_show_title">Show notifications</string>
     <string name="island_notif_hub_desc">Replace statusbar notification icons with island</string>
+    <string name="island_notif_hub_chat_pictures">Prefer chat pictures</string>
+    <string name="island_notif_hub_overflow_title">More notifications indicator</string>
+    <string name="island_notif_hub_overflow_number">Number</string>
+    <string name="island_notif_hub_overflow_dot">Dot</string>
+    <string name="island_notif_hub_overflow_none">None</string>
     <string name="island_notif_hub_title">Notification Hub</string>
     <string name="island_notif_hub_icons_auto">Auto</string>
     <string name="island_notif_hub_order_title">Ordering</string>

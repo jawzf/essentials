@@ -293,6 +293,22 @@ fun AodWallpaperSettingsUI(
                 exit = shrinkVertically() + fadeOut(),
             ) {
                 IconToggleItem(
+                    iconRes = R.drawable.rounded_image_24,
+                    title = stringResource(R.string.feat_aod_wallpaper_share_lock),
+                    isChecked = viewModel.isAodWallpaperShareLock.value,
+                    onCheckedChange = { checked ->
+                        HapticUtil.performVirtualKeyHaptic(view)
+                        viewModel.setAodWallpaperShareLock(checked)
+                    },
+                )
+            }
+
+            AnimatedVisibility(
+                visible = isAlbumArtEnabled,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                IconToggleItem(
                     iconRes = R.drawable.rounded_timer_24,
                     title = stringResource(R.string.feat_aod_wallpaper_keep_on_media),
                     isChecked = if (isTimeoutNever) true else isKeepOnMedia,

@@ -125,7 +125,7 @@ object CompactLayoutEngine {
             return CompactArrangement(solo.soloCellKeys, solo.cellKeys, visible)
         }
 
-        if (before.isEmpty() && selected.size == 1 && after.size == 2 && !selected.first().keepTogether) {
+        if (before.isEmpty() && selected.size == 1 && after.size == 2 && selected.first().cellKeys.size == 2) {
             val item = selected.first()
             return CompactArrangement(listOf(item.cellKeys[0]), listOf(item.cellKeys[1]), visible)
         }

@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.notifications
 
+import com.sameerasw.essentials.island.model.QueueOverflow
+
 import com.sameerasw.essentials.island.model.QueueInfo
 import com.sameerasw.essentials.island.model.StackIcon
 import android.widget.Toast
@@ -56,6 +58,8 @@ class NotificationsPlugin : BaseIslandPlugin() {
         SettingsRepository.KEY_ISLAND_NOTIF_HUB,
         SettingsRepository.KEY_ISLAND_NOTIF_HUB_ICONS,
         SettingsRepository.KEY_ISLAND_NOTIF_HUB_ORDER,
+        SettingsRepository.KEY_ISLAND_NOTIF_HUB_CHAT_PICTURES,
+        SettingsRepository.KEY_ISLAND_NOTIF_HUB_OVERFLOW,
         SettingsRepository.KEY_ISLAND_NOTIF_HUB_SILENT,
         SettingsRepository.KEY_ISLAND_NOTIF_HUB_GROUP,
         SettingsRepository.KEY_ISLAND_NOTIF_DISABLE_LOCKED,
@@ -244,7 +248,8 @@ class NotificationsPlugin : BaseIslandPlugin() {
         }
     }
 
-    private fun applyHub(live: List<ActiveNotificationAlert>) {
+    private fun applyHub(allLive: List<ActiveNotificationAlert>) {
+        val live = allLive.filter { passesFilters(it) }
         val liveKeys = live.mapTo(HashSet()) { it.key }
         val stale = alerts.filter { it.key !in liveKeys && !it.key.startsWith("simulated_") }
         stale.forEach { removeQuietly(it.key) }
@@ -277,6 +282,11 @@ class NotificationsPlugin : BaseIslandPlugin() {
     }
 
     private fun addSilently(alert: ActiveNotificationAlert) {
+        if (!passesFilters(alert)) {
+            removeQuietly(alert.key)
+            render()
+            return
+        }
         val index = alerts.indexOfFirst { it.key == alert.key }
         if (index >= 0) alerts[index] = alert.copy(hubOnly = alerts[index].hubOnly) else insertSilently(alert)
         render()
@@ -409,7 +419,8 @@ class NotificationsPlugin : BaseIslandPlugin() {
         val c = ctx ?: return
         if (minimal()) return
         val otpNeedsExpand = currentAlert()?.let(::isOtp) == true && !settings.isIslandOtpTapToCopyEnabled()
-        val lineAvailable = settings.isIslandLineStageEnabled() && !otpNeedsExpand
+        val lineAvailable = settings.isIslandLineStageEnabled() && !otpNeedsExpand &&
+            peekStyle() != SettingsRepository.ISLAND_NOTIF_PEEK_STYLE_EXPANDED
         markSeen()
         c.request(
             if (lineAvailable) PluginRequest.Peek(ITEM_KEY, timeoutMs(), sticky = true)
@@ -502,7 +513,7 @@ class NotificationsPlugin : BaseIslandPlugin() {
         val cap = settings.getIslandNotifHubIcons().let { if (it == 0) AUTO_CELL_ICONS else it }
         val count = hubEntries().size
         val shown = count.coerceIn(1, cap)
-        val overflow = if (count > cap) 0.3f else 0f
+        val overflow = if (count > cap && settings.getIslandNotifHubOverflow() != QueueOverflow.None) 0.3f else 0f
         return ceil(1f + 0.55f * (shown - 1) + overflow).toInt()
     }
 
@@ -530,8 +541,9 @@ class NotificationsPlugin : BaseIslandPlugin() {
             .filter { settings.isIslandNotifHubIncludeSilent() || !it.isSilent || it.ongoing }
             .sortedByDescending { it.timestamp }
         val entries = if (settings.isIslandNotifHubGroupByApps()) {
-            val standalone = shown.filter { it.ongoing || it.isConversation }.map { HubEntry(it.key, listOf(it), grouped = false) }
-            val groups = shown.filterNot { it.ongoing || it.isConversation }
+            val chats = settings.isIslandNotifHubPreferChatPictures()
+            val standalone = shown.filter { it.ongoing || (chats && it.isConversation) }.map { HubEntry(it.key, listOf(it), grouped = false) }
+            val groups = shown.filterNot { it.ongoing || (chats && it.isConversation) }
                 .groupBy { it.packageName }
                 .map { (pkg, members) -> if (members.size == 1) HubEntry(members.first().key, members, grouped = false) else HubEntry("group:$pkg", members, grouped = true) }
             standalone + groups
@@ -665,6 +677,7 @@ class NotificationsPlugin : BaseIslandPlugin() {
                 onOpen = { select(alert.key) },
                 onDismiss = if (hub()) null else ({ clearAll() }),
                 maxIcons = if (hub()) settings.getIslandNotifHubIcons() else null,
+                overflow = if (hub()) settings.getIslandNotifHubOverflow() else QueueOverflow.Number,
                 cells = bubbleCells(),
             )
             else -> null
@@ -928,7 +941,7 @@ class NotificationsPlugin : BaseIslandPlugin() {
     }
 
     private fun stackIconFor(alert: ActiveNotificationAlert, current: Boolean, highlight: Boolean = false): StackIcon {
-        val icon = if (concealed() && hidesChatPictures()) alert.appIcon ?: alert.icon else alert.chatIcon ?: alert.appIcon ?: alert.icon
+        val icon = if ((concealed() && hidesChatPictures()) || (hub() && !settings.isIslandNotifHubPreferChatPictures())) alert.appIcon ?: alert.icon else alert.chatIcon ?: alert.appIcon ?: alert.icon
         return StackIcon(alert.key, current = current, onSelect = { select(alert.key) }, highlight = highlight) { size ->
             IslandBitmap(icon, size, circle = true, fallbackRes = R.drawable.rounded_notifications_unread_24)
         }

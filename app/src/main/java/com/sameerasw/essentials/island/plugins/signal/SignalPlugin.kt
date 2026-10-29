@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.signal
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import com.sameerasw.essentials.utils.NetworkUtil
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -205,7 +207,7 @@ class SignalPlugin : BaseIslandPlugin() {
                     placement = CompactPlacement.Dynamic,
                     compact = listOf(
                         CompactCell("signal.offline") {
-                            IslandIcon(R.drawable.rounded_android_cell_dual_5_bar_alert_24, size = 18.dp, tint = MaterialTheme.colorScheme.primary)
+                            IslandIcon(R.drawable.rounded_android_cell_dual_5_bar_alert_24, size = 18.dp, tint = islandAccent())
                         },
                     ),
                 ),
@@ -236,7 +238,7 @@ class SignalPlugin : BaseIslandPlugin() {
                 placement = CompactPlacement.Dynamic,
                 compact = listOf(
                     CompactCell("signal.bars") {
-                        SignalIndicator(wifiLevel, bars, MaterialTheme.colorScheme.primary, shownLabel)
+                        SignalIndicator(wifiLevel, bars, islandAccent(), shownLabel)
                     },
                 ),
             ),

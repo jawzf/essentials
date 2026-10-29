@@ -29,7 +29,7 @@ fun RollingText(text: String, modifier: Modifier = Modifier, style: TextStyle = 
                 AnimatedContent(
                     targetState = char,
                     transitionSpec = {
-                        val slide = spring<IntOffset>(dampingRatio = 0.8f, stiffness = 500f)
+                        val slide = com.sameerasw.essentials.island.ui.motionSpring<IntOffset>(dampingRatio = 0.8f, stiffness = 500f)
                         val sign = if (rollDown) -1 else 1
                         (slideInVertically(slide) { sign * it } + fadeIn())
                             .togetherWith(slideOutVertically(slide) { -sign * it } + fadeOut())

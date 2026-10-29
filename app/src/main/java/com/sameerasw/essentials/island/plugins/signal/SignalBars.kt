@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.signal
 
+import com.sameerasw.essentials.island.ui.motionTween
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -70,8 +72,8 @@ fun SignalIndicator(wifiLevel: Int?, mobileLevel: Int, rawColor: Color, label: S
     AnimatedContent(
         targetState = wifiLevel,
         transitionSpec = {
-            (fadeIn(tween(250)) + scaleIn(tween(250), initialScale = 0.6f)) togetherWith
-                (fadeOut(tween(200)) + scaleOut(tween(200), targetScale = 0.6f))
+            (fadeIn(motionTween(250)) + scaleIn(motionTween(250), initialScale = 0.6f)) togetherWith
+                (fadeOut(motionTween(200)) + scaleOut(motionTween(200), targetScale = 0.6f))
         },
         modifier = modifier,
         label = "signalIndicator",

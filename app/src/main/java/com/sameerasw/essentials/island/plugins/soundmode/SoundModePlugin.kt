@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.soundmode
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import android.app.AutomaticZenRule
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -177,10 +179,10 @@ class SoundModePlugin : BaseIslandPlugin() {
                 priority = IslandPriority.SOUND_MODE,
                 placement = CompactPlacement.Dynamic,
                 compact = listOf(
-                    CompactCell("sound_mode.icon") { IslandIcon(icon, size = 18.dp, tint = MaterialTheme.colorScheme.primary) },
+                    CompactCell("sound_mode.icon") { IslandIcon(icon, size = 18.dp, tint = islandAccent()) },
                 ),
                 line = LineContent(
-                    icon = { IslandIcon(icon, tint = MaterialTheme.colorScheme.primary) },
+                    icon = { IslandIcon(icon, tint = islandAccent()) },
                     start = title,
                     end = state,
                 ),
