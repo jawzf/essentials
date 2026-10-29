@@ -672,6 +672,7 @@ class IslandCoordinator(
         val expandedWidth = minOf(settings.getIslandExpandedWidth(), available / scale)
         val iconCustomMode = settings.getString(SettingsRepository.KEY_ISLAND_ICON_COLOR_MODE, null) == SettingsRepository.ISLAND_ICON_COLOR_CUSTOM
         val iconMaterialYou = settings.getBoolean(SettingsRepository.KEY_ISLAND_ICON_MATERIAL_YOU, true)
+        IslandMotion.speed = settings.getIslandAnimationSpeed().coerceIn(0.5f, 1.5f)
         spec.value = IslandLayoutSpec(
             cameraDiameter = (geo.diameter / density).dp,
             cameraGap = (geo.gap / density).dp,
@@ -856,6 +857,7 @@ class IslandCoordinator(
             SettingsRepository.KEY_ISLAND_LINE_STAGE_ENABLED,
             SettingsRepository.KEY_ISLAND_EXPANDED_SCALE,
             SettingsRepository.KEY_ISLAND_FONT_SCALE,
+            SettingsRepository.KEY_ISLAND_ANIMATION_SPEED,
             SettingsRepository.KEY_ISLAND_CAMERA_POSITION,
             SettingsRepository.KEY_ISLAND_ORIENTATION_PROFILES,
             SettingsRepository.KEY_ISLAND_HIDE_PORTRAIT,

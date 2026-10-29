@@ -200,8 +200,8 @@ private fun IslandRootContent(
             bonded = false
         }
     }
-    val bond by animateFloatAsState(if (bonded) 1f else 0f, tween(560, easing = FastOutSlowInEasing), label = "islandBond")
-    val presence by animateFloatAsState(targetSpec.cameraPresence, tween(420), label = "cameraPresence")
+    val bond by animateFloatAsState(if (bonded) 1f else 0f, motionTween(560, easing = FastOutSlowInEasing), label = "islandBond")
+    val presence by animateFloatAsState(targetSpec.cameraPresence, motionTween(420), label = "cameraPresence")
     val spec = if (presence == 1f && bond == 0f) {
         targetSpec
     } else {
@@ -251,8 +251,8 @@ private fun IslandRootContent(
     LaunchedEffect(state.focusedKey, state.items[state.focusedKey]?.contentId, spec.pulseShadow) {
         pulse.snapTo(0f)
         if (!spec.pulseShadow || state.focusedKey == null) return@LaunchedEffect
-        pulse.animateTo(1f, tween(250, easing = LinearEasing))
-        pulse.animateTo(0f, tween(1200, easing = LinearEasing))
+        pulse.animateTo(1f, motionTween(250, easing = LinearEasing))
+        pulse.animateTo(0f, motionTween(1200, easing = LinearEasing))
     }
     val minSurfaceWidth = with(density) { spec.cameraDiameter.roundToPx() }
     val minSurfaceHeight = with(density) { spec.compactHeight.roundToPx() }
@@ -335,7 +335,7 @@ private fun IslandRootContent(
             previousStage = stage
             lastKey = key
             outgoing = null
-            launch { contentAlpha.animateTo(1f, tween(durationMillis = 180)) }
+            launch { contentAlpha.animateTo(1f, motionTween(durationMillis = 180)) }
             launch { contentMotion.animateTo(0f, IslandMotion.contentSpring()) }
             delay(IslandMotion.COLLAPSE_MS + 400L)
             if (dragCommitted) {
@@ -362,13 +362,13 @@ private fun IslandRootContent(
             outgoing = leaving
             launch {
                 launch { outgoingMotion.animateTo(if (growing) 1f else -1f, IslandMotion.collapseFloat()) }
-                outgoingAlpha.animateTo(0f, tween(durationMillis = 140))
+                outgoingAlpha.animateTo(0f, motionTween(durationMillis = 140))
                 if (outgoing == leaving) outgoing = null
             }
         }
         lastKey = key
         launch { contentMotion.animateTo(0f, if (growing) IslandMotion.contentSpring() else IslandMotion.collapseFloat()) }
-        contentAlpha.animateTo(1f, tween(durationMillis = if (growing) 180 else 160, delayMillis = if (growing) 30 else 100))
+        contentAlpha.animateTo(1f, motionTween(durationMillis = if (growing) 180 else 160, delayMillis = if (growing) 30 else 100))
     }
     val outsetPx = with(density) { spec.expandedOutset.toPx() }
     val cameraSlotPx = with(density) { spec.cameraSlotWidth.roundToPx() }
@@ -383,7 +383,7 @@ private fun IslandRootContent(
         scope.launch {
             val px = with(density) { 4.dp.toPx() }
             for ((i, x) in listOf(-px, px, -px * 0.5f, 0f).withIndex()) {
-                wiggle.animateTo(x, tween(durationMillis = if (i == 0) 60 else 80))
+                wiggle.animateTo(x, motionTween(durationMillis = if (i == 0) 60 else 80))
                 if (x != 0f) IslandHaptics.wiggle(context)
             }
         }
@@ -505,7 +505,7 @@ private fun IslandRootContent(
     } ?: OVERLAP_MAX
     val sideBubbleWidth = lastCatchUp
         ?.takeIf { spec.queueStyle == QueueStyle.Overlap && it.content == null && it.icons.isNotEmpty() }
-        ?.let { stackOverlapWidth(it.icons.size, spec.compactHeight, bubbleMaxIcons) }
+        ?.let { stackOverlapWidth(it.icons.size, spec.compactHeight, bubbleMaxIcons, it.overflow) }
         ?: spec.compactHeight
     val sideWidthPx = with(density) { sideBubbleWidth.roundToPx() }
     val sideWidthAnim = remember { Animatable(sideWidthPx.toFloat()) }
@@ -596,8 +596,8 @@ private fun IslandRootContent(
         when {
             queueShown && expandedAlready -> pillReveal.animateTo(1f, IslandMotion.float())
             queueShown -> pillReveal.animateTo(1f, IslandMotion.float())
-            expandedAlready -> pillReveal.animateTo(0f, tween(240))
-            else -> pillReveal.animateTo(0f, tween(180))
+            expandedAlready -> pillReveal.animateTo(0f, motionTween(240))
+            else -> pillReveal.animateTo(0f, motionTween(180))
         }
     }
     LaunchedEffect(stage) {
@@ -677,7 +677,7 @@ private fun IslandRootContent(
         AnimatedVisibility(
             visible = queueShown,
             enter = if (stage == IslandStage.Expanded) EnterTransition.None else fadeIn(IslandMotion.contentIn()),
-            exit = if (stage == IslandStage.Expanded) fadeOut(tween(1, delayMillis = 260)) else fadeOut(IslandMotion.contentOut()),
+            exit = if (stage == IslandStage.Expanded) fadeOut(motionTween(1, delayMillis = 260)) else fadeOut(IslandMotion.contentOut()),
         ) {
             
             Box(Modifier.fillMaxSize()) {
@@ -797,6 +797,7 @@ private fun IslandRootContent(
                     outlineColor = outlineFor(1f),
                     outlineThickness = spec.outlineThickness,
                     maxIcons = bubbleMaxIcons,
+                    overflow = lastCatchUp?.overflow ?: com.sameerasw.essentials.island.model.QueueOverflow.Number,
                     modifier = Modifier
                         .offset {
                             if (bubbleOnlyLayout) {
@@ -837,7 +838,7 @@ private fun IslandRootContent(
                                     scope.launch {
                                         if (dragX.value * towardCamera > threshold) {
                                             IslandHaptics.tap(context)
-                                            dragX.animateTo(towardCamera * maxDrag, tween(100))
+                                            dragX.animateTo(towardCamera * maxDrag, motionTween(100))
                                             bubbleData.onDismiss?.invoke()
                                         } else {
                                             dragX.animateTo(0f, IslandMotion.float())
@@ -1329,7 +1330,7 @@ private fun IslandRootContent(
             }
         }
         if (showCameraRing) {
-            val ringColor = MaterialTheme.colorScheme.primary
+            val ringColor = com.sameerasw.essentials.island.ui.components.islandAccent()
             Canvas(Modifier.fillMaxSize()) {
                 val stroke = 2.dp.toPx()
                 val radius = spec.compactHeight.toPx() / 2f
@@ -1478,8 +1479,8 @@ private fun SwipeIntentChip(intent: SwipeIntent?, modifier: Modifier) {
     AnimatedVisibility(
         visible = intent != null,
         modifier = modifier,
-        enter = fadeIn(tween(120)) + scaleIn(spring(dampingRatio = 0.55f, stiffness = 600f), initialScale = 0.6f),
-        exit = fadeOut(tween(100)) + scaleOut(tween(100), targetScale = 0.8f),
+        enter = fadeIn(motionTween(120)) + scaleIn(motionSpring(dampingRatio = 0.55f, stiffness = 600f), initialScale = 0.6f),
+        exit = fadeOut(motionTween(100)) + scaleOut(motionTween(100), targetScale = 0.8f),
     ) {
         val hide = shown == SwipeIntent.Hide
         val container = if (hide) Color(0xFFAECBFA) else Color(0xFFF6AEA9)

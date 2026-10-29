@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.timebattery
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import com.sameerasw.essentials.island.ui.islandTextColor
 import com.sameerasw.essentials.island.ui.IslandTextStyles
 import androidx.compose.ui.unit.sp
@@ -291,8 +293,8 @@ class TimeBatteryPlugin : BaseIslandPlugin() {
             compact = listOf(
                 CompactCell("battery") {
                     when {
-                        iconStyle -> BatteryGlyph(batteryLevel, displayColor ?: MaterialTheme.colorScheme.primary, showLevel = showLevel)
-                        else -> BatteryRing(batteryLevel, displayColor ?: MaterialTheme.colorScheme.primary, showLevel = showLevel)
+                        iconStyle -> BatteryGlyph(batteryLevel, displayColor ?: islandAccent(), showLevel = showLevel)
+                        else -> BatteryRing(batteryLevel, displayColor ?: islandAccent(), showLevel = showLevel)
                     }
                 },
             ),
@@ -301,14 +303,14 @@ class TimeBatteryPlugin : BaseIslandPlugin() {
                 LineContent(
                     icon = {
                         when {
-                            iconStyle -> BatteryGlyph(batteryLevel, displayColor ?: MaterialTheme.colorScheme.primary, showLevel = false)
-                            else -> BatteryRing(batteryLevel, displayColor ?: MaterialTheme.colorScheme.primary, showLevel = false)
+                            iconStyle -> BatteryGlyph(batteryLevel, displayColor ?: islandAccent(), showLevel = false)
+                            else -> BatteryRing(batteryLevel, displayColor ?: islandAccent(), showLevel = false)
                         }
                     },
                     start = "$batteryLevel%",
                     end = label,
                     endSlot = if (showShield) {
-                        { IslandIcon(R.drawable.rounded_shield_filled_24, size = 18.dp, tint = MaterialTheme.colorScheme.primary) }
+                        { IslandIcon(R.drawable.rounded_shield_filled_24, size = 18.dp, tint = islandAccent()) }
                     } else {
                         null
                     },

@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.alarm
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import com.sameerasw.essentials.island.IslandTimeFormat
 import android.app.AlarmManager
 import android.content.BroadcastReceiver
@@ -105,11 +107,11 @@ class AlarmPlugin : BaseIslandPlugin() {
                 priority = IslandPriority.ALARM,
                 placement = CompactPlacement.Dynamic,
                 compact = buildList {
-                    add(CompactCell("alarm.icon") { IslandIcon(R.drawable.rounded_alarm_24, size = 18.dp, tint = MaterialTheme.colorScheme.primary) })
+                    add(CompactCell("alarm.icon") { IslandIcon(R.drawable.rounded_alarm_24, size = 18.dp, tint = islandAccent()) })
                     if (!hideTime) add(CompactCell("alarm.time") { Text(shortTime, style = IslandTextStyles.compact) })
                 },
                 line = LineContent(
-                    icon = { IslandIcon(R.drawable.rounded_alarm_24, tint = MaterialTheme.colorScheme.primary) },
+                    icon = { IslandIcon(R.drawable.rounded_alarm_24, tint = islandAccent()) },
                     start = context.getString(R.string.island_show_alarm_title),
                     end = if (hideTime) "" else fullTime,
                 ),

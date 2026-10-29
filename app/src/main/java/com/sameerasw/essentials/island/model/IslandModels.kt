@@ -7,6 +7,8 @@ import com.sameerasw.essentials.island.ui.IslandLayoutSpec
 
 enum class IslandStage { Hidden, Compact, Line, Expanded }
 
+enum class QueueOverflow { Number, Dot, None }
+
 enum class CompactPlacement { Pinned, Dynamic }
 
 // Island item priority
@@ -100,6 +102,7 @@ class SideBubble(
     val whenOccupiedOnly: Boolean = false,
     val onDismiss: (() -> Unit)? = null,
     val maxIcons: Int? = null,
+    val overflow: QueueOverflow = QueueOverflow.Number,
     // Compact cells' worth of room the bubble takes beside the camera
     val cells: Int = 1,
 )

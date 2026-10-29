@@ -229,6 +229,7 @@ class MainViewModel : ViewModel() {
     val islandExpandedWidth = mutableFloatStateOf(360f)
     val islandExpandedRoundness = mutableFloatStateOf(24f)
     val islandFontScale = mutableFloatStateOf(1f)
+    val islandAnimationSpeed = mutableFloatStateOf(1f)
     val isIslandHideInOwnerApp = mutableStateOf(false)
     val isIslandHideOnShade = mutableStateOf(false)
     val isIslandKeepOnLandscape = mutableStateOf(false)
@@ -293,7 +294,9 @@ class MainViewModel : ViewModel() {
     val islandNotifHubIcons = mutableIntStateOf(0)
     val isIslandNotifHubIncludeSilent = mutableStateOf(false)
     val isIslandNotifHubGroupByApps = mutableStateOf(false)
+    val isIslandNotifHubPreferChatPictures = mutableStateOf(true)
     val islandNotifHubOrder = mutableStateOf(SettingsRepository.ISLAND_NOTIF_HUB_ORDER_DYNAMIC)
+    val islandNotifHubOverflow = mutableStateOf(com.sameerasw.essentials.island.model.QueueOverflow.Number)
     val isIslandNotifTapToOpen = mutableStateOf(false)
     val isIslandCatchUpEnabled = mutableStateOf(true)
     val islandCatchUpTimeoutMs = mutableLongStateOf(10000L)
@@ -995,6 +998,12 @@ class MainViewModel : ViewModel() {
 
                     SettingsRepository.KEY_ISLAND_NOTIF_HUB_GROUP ->
                         isIslandNotifHubGroupByApps.value = settingsRepository.isIslandNotifHubGroupByApps()
+
+                    SettingsRepository.KEY_ISLAND_NOTIF_HUB_CHAT_PICTURES ->
+                        isIslandNotifHubPreferChatPictures.value = settingsRepository.isIslandNotifHubPreferChatPictures()
+
+                    SettingsRepository.KEY_ISLAND_NOTIF_HUB_OVERFLOW ->
+                        islandNotifHubOverflow.value = settingsRepository.getIslandNotifHubOverflow()
 
                     SettingsRepository.KEY_ISLAND_NOTIF_HUB_ORDER ->
                         islandNotifHubOrder.value = settingsRepository.getIslandNotifHubOrder()
@@ -2500,6 +2509,7 @@ class MainViewModel : ViewModel() {
         islandExpandedWidth.floatValue = settingsRepository.getIslandExpandedWidth()
         islandExpandedRoundness.floatValue = settingsRepository.getIslandExpandedRoundness()
         islandFontScale.floatValue = settingsRepository.getIslandFontScale()
+        islandAnimationSpeed.floatValue = settingsRepository.getIslandAnimationSpeed()
         isIslandHideInOwnerApp.value = settingsRepository.isIslandHideInOwnerAppEnabled()
         isIslandHideOnShade.value = settingsRepository.isIslandHideOnShadeEnabled()
         isIslandKeepOnLandscape.value = settingsRepository.isIslandKeepOnLandscapeEnabled()
@@ -2578,6 +2588,8 @@ class MainViewModel : ViewModel() {
         islandNotifHubOrder.value = settingsRepository.getIslandNotifHubOrder()
         isIslandNotifHubIncludeSilent.value = settingsRepository.isIslandNotifHubIncludeSilent()
         isIslandNotifHubGroupByApps.value = settingsRepository.isIslandNotifHubGroupByApps()
+        isIslandNotifHubPreferChatPictures.value = settingsRepository.isIslandNotifHubPreferChatPictures()
+        islandNotifHubOverflow.value = settingsRepository.getIslandNotifHubOverflow()
         isIslandNotifTapToOpen.value = settingsRepository.isIslandNotifTapToOpenEnabled()
         isIslandCatchUpEnabled.value = settingsRepository.isIslandCatchUpEnabled()
         islandCatchUpTimeoutMs.longValue = settingsRepository.getIslandCatchUpStoredMs()
@@ -5960,6 +5972,11 @@ class MainViewModel : ViewModel() {
         settingsRepository.setIslandHideOnShadeEnabled(enabled)
     }
 
+    fun setIslandAnimationSpeed(value: Float) {
+        islandAnimationSpeed.floatValue = value
+        settingsRepository.setIslandAnimationSpeed(value)
+    }
+
     fun setIslandFontScale(value: Float) {
         islandFontScale.floatValue = value
         settingsRepository.setIslandFontScale(value)
@@ -6064,6 +6081,16 @@ class MainViewModel : ViewModel() {
     fun setIslandNotifHubIncludeSilent(enabled: Boolean) {
         isIslandNotifHubIncludeSilent.value = enabled
         settingsRepository.setIslandNotifHubIncludeSilent(enabled)
+    }
+
+    fun setIslandNotifHubOverflow(value: com.sameerasw.essentials.island.model.QueueOverflow) {
+        islandNotifHubOverflow.value = value
+        settingsRepository.setIslandNotifHubOverflow(value)
+    }
+
+    fun setIslandNotifHubPreferChatPictures(enabled: Boolean) {
+        isIslandNotifHubPreferChatPictures.value = enabled
+        settingsRepository.setIslandNotifHubPreferChatPictures(enabled)
     }
 
     fun setIslandNotifHubGroupByApps(enabled: Boolean) {

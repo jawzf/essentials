@@ -1,5 +1,7 @@
 package com.sameerasw.essentials.island.plugins.navigation
 
+import com.sameerasw.essentials.island.ui.components.islandAccent
+
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -150,7 +152,7 @@ class NavigationPlugin : BaseIslandPlugin() {
                 expanded = ExpandedContent { scope ->
                     NavigationExpanded(
                         data = d,
-                        accent = MaterialTheme.colorScheme.primary,
+                        accent = islandAccent(),
                         onOpen = { open(d) },
                         onExit = d.exitIntent?.let { intent ->
                             {
@@ -190,7 +192,7 @@ internal fun Maneuver(d: NavigationNotificationData, size: Int) {
         IslandIcon(
             R.drawable.round_navigation_24,
             size = size.dp,
-            tint = MaterialTheme.colorScheme.primary
+            tint = islandAccent()
         )
     }
 }

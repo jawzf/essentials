@@ -723,9 +723,9 @@ class ScreenOffAccessibilityService :
             if (window.type != android.view.accessibility.AccessibilityWindowInfo.TYPE_SYSTEM) return@any false
             val title = window.title?.toString().orEmpty()
             if (VolumePanelDetector.isVolumePanel(window)) return@any false
-            if (!SHADE_WINDOW_TITLES.any { title.contains(it, ignoreCase = true) }) return@any false
+            val titled = SHADE_WINDOW_TITLES.any { title.contains(it, ignoreCase = true) }
             window.getBoundsInScreen(bounds)
-            bounds.height() >= screenHeight * 0.2f
+            bounds.height() >= screenHeight * if (titled) 0.2f else 0.4f
         }
     }
 
