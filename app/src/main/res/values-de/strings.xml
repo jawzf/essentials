@@ -1701,7 +1701,7 @@ Zudem muss die Einstellung unter Umständen mehrfach angewendet werden, damit si
     <string name="status_glance_show_calendar_title">Kalenderereignisse</string>
     <string name="duo_show_media_title">Medienwiedergabe</string>
     <string name="duo_show_time_title">Uhrzeit</string>
-    <string name="duo_show_battery_title">Akku</string>
+    <string name="duo_show_battery_title">Batterie</string>
     <string name="status_glance_calendar_timeframe_title">Anstehende Ereignisse anzeigen in</string>
     <string name="status_glance_battery_icon_size_title">Größe des Akkusymbols</string>
     <string name="status_glance_battery_show_otherwise_title">Andernfalls anzeigen</string>
@@ -2060,4 +2060,5 @@ Die Stufen können nur von der normalen Lautstärke abwärts, niemals darüber h
     <string name="island_brief_show_alarm_title">Nächsten Wecker anzeigen</string>
     <string name="island_brief_two_line_header_title">Zweizeiliger Header</string>
     <string name="duo_slide_mirror_direction_title">Richtungen spiegeln</string>
+    <string name="island_combine_with_duo">Kombinieren mit Duo</string>
 </resources>
