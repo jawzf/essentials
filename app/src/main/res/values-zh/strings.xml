@@ -1627,10 +1627,10 @@
     <string name="duo_enable_desc">不能折叠，但是看起来挺酷的，不是吗？</string>
     <string name="duo_auto_detect_title">自动检测摄像头</string>
     <string name="duo_auto_detect_desc">自动定位至摄像头孔前</string>
-    <string name="duo_show_battery_title">电池</string>
+    <string name="duo_show_battery_title">電池</string>
     <string name="duo_show_battery_percentage_title">电量显示</string>
     <string name="cat_networks">数据信号强度显示</string>
-    <string name="duo_show_time_title">时间</string>
+    <string name="duo_show_time_title">時間</string>
     <string name="duo_rotate_album_art_title">旋轉專輯封面</string>
     <string name="duo_show_flashlight_title">手电筒</string>
     <string name="duo_material_you_title">使用 Material You 色彩</string>
@@ -1640,7 +1640,7 @@
     <string name="duo_action_double_tap_title">双击</string>
     <string name="duo_action_swipe_down_title">下滑</string>
     <string name="feat_allow_overlays_in_settings_desc">允許各種應用程式在系統設定上方繪製覆蓋層</string>
-    <string name="cat_navigation">导航</string>
+    <string name="cat_navigation">導航</string>
     <string name="island_font_scale_title">字体大小</string>
     <string name="island_border_outline_dynamic_title">自适应(随播放专辑主题色同步变化)</string>
     <string name="island_border_outline_hide_expanded_title">灵动岛展开后隐藏边框</string>
@@ -1780,6 +1780,7 @@
     <string name="island_dynamic_hide_status_bar_title">展开时隐藏所有内容</string>
     <string name="island_hide_icons_title">动态隐藏状态栏图标</string>
     <string name="island_bond_edge_title">置顶并已刘海屏显示</string>
+    <string name="island_call_options_title">電話</string>
     <string name="tile_lockdown_mode">鎖定</string>
     <string name="feat_screenshots_title">螢幕截圖清理</string>
     <string name="feat_screenshots_desc">將分享過和舊的截圖清掉</string>
